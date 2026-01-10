@@ -1,0 +1,100 @@
+# Arquivos de Sistema Operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs e Temporários
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de Backup
+*.backup
+*.bak
+*~
+*.swp
+*.swo
+
+# Documentação Temporária / Rascunhos
+*_OLD.md
+*_DRAFT.md
+TESTE_*.txt
+RASCUNHO_*.md
+
+# Arquivos Sensíveis (não commitar chaves/tokens)
+.env
+.env.local
+secrets.json
+credentials.json
+*_SECRET_*
+
+# IDEs e Editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node Modules (se adicionar build no futuro)
+node_modules/
+dist/
+build/
+
+# Arquivos de Configuração Local
+config.local.js
+settings.local.json
+
+# Chrome Extension Build
+*.crx
+*.pem
+*.zip
+
+# Arquivos de Teste
+test-results/
+coverage/
+
+# Arquivos Grandes
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Documentação de Desenvolvimento (opcional, manter apenas o principal)
+ARQUITETURA_TROCA_TURNO.md
+AUDIO_FIX_SUMMARY.md
+AUDIO_IMPLEMENTACAO_COMPLETA.md
+AUDIO_QUICK_REFERENCE.md
+CHECKLIST_IMPLEMENTACAO.txt
+COMECE_AQUI.txt
+CORRECOES_REALIZADAS.md
+DASHBOARD_PREPARACAO.md
+DOCUMENTATION_INDEX.md
+FINAL_STATUS_REPORT.md
+FLUXO_VISUAL.txt
+GUIA_RAPIDO.md
+GUIA_TESTE_ROBUSTO.md
+GUIA_TESTES_V2.md
+IMPLEMENTACAO_AUDIO_COMPLETA.md
+IMPLEMENTACAO_FINALIZADA.txt
+IMPLEMENTACAO_HISTORICO_SEMANAL.md
+INDICE.txt
+MANIFESTO.txt
+NAVEGACAO_INTERFACE.md
+PHASE_6_COMPLETION_SUMMARY.md
+README_AUDIO_SYSTEM.md
+RELEASE_NOTES_V3.md
+RESUMO_AUDIO.md
+RESUMO_FINAL.txt
+RESUMO_MUDANCA_FLOCUS.txt
+RESUMO_MUDANCAS.md
+SOLUCAO_SYNC_ERROR.md
+TESTE_AUDIO.txt
+TESTE_AUDIO_RAPIDO.md
+TESTE_CONEXAO.md
+TESTE_PERSISTENCIA.txt
+TEST_AND_VERIFY.md
+VISUALIZACAO_HISTORICO_SEMANAL.md
+background_novo.js
+background.js.backup
+exemplo-export.json
+icon.png.jpg

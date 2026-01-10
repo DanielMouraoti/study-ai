@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-overlay: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.16), transparent 30%), radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.14), transparent 28%), rgba(9, 12, 28, 0.68);
+      --card: rgba(255, 255, 255, 0.14);
+      --stroke: rgba(255, 255, 255, 0.2);
+      --text: #e9edf5;
+      --muted: #c6cfde;
+      --accent: #8bd0ff;
+      --accent-strong: #63b0ff;
+      --shadow: 0 18px 38px rgba(9, 19, 48, 0.45);
+      --radius: 18px;
+    }
+
+    body.light {
+      --bg-overlay: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.4), transparent 30%), radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.35), transparent 28%), rgba(245, 247, 252, 0.9);
+      --card: rgba(255, 255, 255, 0.6);
+      --stroke: rgba(16, 28, 60, 0.12);
+      --text: #0d1630;
+      --muted: #384967;
+      --accent: #2a7ef5;
+      --accent-strong: #1b69d8;
+      --shadow: 0 18px 38px rgba(13, 22, 48, 0.18);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 350px;
+      min-height: 500px;
+      display: grid;
+      place-items: center;
+      background: #1a1a2e;
+      position: relative;
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    body::before {
+      content: ""; position: fixed; inset: 0; background: var(--bg-overlay); backdrop-filter: blur(2px); z-index: 0; pointer-events: none;
+    }
+
+    main {
+      position: relative; z-index: 1; width: 90%; margin: 0 auto; padding: 12px; background: var(--card); border-radius: 16px;
+      box-shadow: var(--shadow); backdrop-filter: blur(14px); border: 1px solid var(--stroke); display: flex; flex-direction: column; gap: 8px;
+    }
+
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; line-height: 1.2; }
+    header h1 { font-size: 16px; letter-spacing: -0.01em; margin: 0; padding: 0; }
+    .brand { display: flex; align-items: center; gap: 8px; }
+    .brand .logo { font-size: 18px; }
+
+    .tabs { display: flex; gap: 4px; padding: 4px; background: rgba(255,255,255,0.08); border: 1px solid var(--stroke); border-radius: 10px; }
+    .tab { flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 6px 4px; border-radius: 8px; color: var(--muted); background: transparent; border: none; cursor: pointer; font-weight: 700; font-size: 11px; transition: all 160ms ease; white-space: nowrap; overflow: hidden; }
+    .tab:hover { color: var(--text); background: rgba(255,255,255,0.12); }
+    .tab.active { color: #0a1222; background: linear-gradient(120deg, var(--accent), var(--accent-strong)); }
+
+    .section { display: none; opacity: 0; transform: translateY(6px); transition: opacity 180ms ease, transform 180ms ease; max-height: 380px; overflow-y: auto; padding-right: 4px; }
+    .section.active { display: block; opacity: 1; transform: translateY(0); }
+
+    .timer { display: grid; gap: 10px; }
+    #timer-display { font-size: 48px; letter-spacing: 0.06em; font-weight: 700; text-align: center; color: #f6f8fb; }
+    .controls { display: flex; gap: 6px; }
+    .btn { flex: 1; padding: 10px; border: 1px solid rgba(255,255,255,0.25); border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; transition: transform 120ms ease, filter 120ms ease; }
+    .btn.primary { background: linear-gradient(120deg, var(--accent), var(--accent-strong)); color: #0a1222; box-shadow: 0 12px 26px rgba(12, 23, 48, 0.28); }
+    .btn.secondary { background: rgba(255,255,255,0.12); color: var(--text); box-shadow: 0 8px 18px rgba(12, 23, 48, 0.2); }
+    .btn.glass { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: var(--text); }
+    .btn.glass:hover { background: rgba(255,255,255,0.12); }
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .row.flex-center { display: flex; align-items: flex-end; gap: 6px; }
+    .field { display: grid; gap: 6px; }
+    .select, .input { width: 100%; padding: 8px 10px; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.08); color: var(--text); font-size: 13px; outline: none; }
+    .select:focus, .input:focus { border-color: var(--accent); background: rgba(255,255,255,0.12); }
+    .hint { font-size: 11px; color: var(--muted); }
+    .divider { height: 1px; background: rgba(255,255,255,0.15); margin: 4px 0; }
+
+    .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .stats-header h2 { font-size: 16px; font-weight: 700; }
+    .stats-grid { display: grid; gap: 10px; }
+    .card { padding: 10px; background: rgba(255,255,255,0.08); border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); }
+    canvas { width: 100%; height: 160px; }
+
+    .actions { display: flex; gap: 8px; }
+    .file-input { display: none; }
+
+    .settings-grid { display: grid; gap: 12px; }
+    .setting { display: grid; gap: 8px; }
+    .toggle { display: flex; align-items: center; gap: 8px; }
+    .switch { appearance: none; width: 46px; height: 24px; border-radius: 999px; background: rgba(255,255,255,0.18); border: 1px solid var(--stroke); position: relative; cursor: pointer; }
+    .switch:checked { background: linear-gradient(120deg, var(--accent), var(--accent-strong)); }
+    .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left 160ms ease; }
+    .switch:checked::after { left: 24px; }
+    input[type="range"] { width: 100%; cursor: pointer; }
+  </style>
+</head>
+<body class="dark">
+  <main>
+    <header>
+      <div class="brand"><span class="logo">🧠</span><h1>Study AI</h1></div>
+      <div class="hint">Pomodoro • MV3</div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="focus">🧠 <span>Foco</span></button>
+      <button class="tab" data-tab="stats">📈 <span>Estatísticas</span></button>
+      <button class="tab" data-tab="settings">⚙️ <span>Configurações</span></button>
+    </nav>
+
+    <!-- ABA 1: FOCO -->
+    <section id="tab-focus" class="section active">
+      <div class="timer">
+        <div id="timer-display">25:00</div>
+        <div class="controls">
+          <button id="btn-start-pause" class="btn primary">Iniciar</button>
+          <button id="btn-reset" class="btn secondary">Resetar</button>
+        </div>
+
+        <!-- Painel de Controle de Música Spotify -->
+        <div id="spotify-panel" style="display:none; margin-top: 8px; padding: 8px; background: rgba(30, 215, 96, 0.1); border: 1px solid rgba(30, 215, 96, 0.3); border-radius: 8px;">
+          <div style="font-size: 11px; color: var(--muted); margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <span id="spotify-track-name">Nenhuma música</span> • <span id="spotify-artist-name"></span>
+          </div>
+          <div style="display: flex; gap: 4px; justify-content: center;">
+            <button id="btn-spotify-prev" class="btn secondary" style="flex: 0 0 auto; padding: 6px 8px; font-size: 12px;">⏮️</button>
+            <button id="btn-spotify-play" class="btn primary" style="flex: 0 0 auto; padding: 6px 8px; font-size: 12px;">▶️</button>
+            <button id="btn-spotify-next" class="btn secondary" style="flex: 0 0 auto; padding: 6px 8px; font-size: 12px;">⏭️</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label class="hint">Modo do Timer</label>
+            <select id="modeSelect" class="select">
+              <option value="focus">Foco (25m)</option>
+              <option value="shortBreak">Pausa Curta (5m)</option>
+              <option value="longBreak">Pausa Longa (15m)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="hint">Tema de Estudo</label>
+            <select id="themeSelect" class="select"></select>
+          </div>
+        </div>
+        <div id="customThemeRow" class="field" style="display:none;">
+          <input id="customThemeInput" class="input" type="text" maxlength="50" placeholder="Digite seu tema personalizado..." />
+          <div class="hint">Pressione Enter para salvar</div>
+        </div>
+        <div class="hint">Tema atual: <strong id="currentTheme">Programação</strong></div>
+      </div>
+    </section>
+
+    <!-- ABA 2: ESTATÍSTICAS / DASHBOARD -->
+    <section id="tab-stats" class="section">
+      <div class="stats-grid">
+        <div class="stats-header">
+          <h2>📊 Dashboard</h2>
+          <select id="timeFilter" class="select" style="max-width: 140px;">
+            <option value="week">Semana</option>
+            <option value="month">Mês</option>
+            <option value="year">Ano</option>
+          </select>
+        </div>
+        <div class="card">
+          <canvas id="weeklyChart"></canvas>
+        </div>
+        <div class="card">
+          <canvas id="categoryChart"></canvas>
+        </div>
+        <div class="actions">
+          <button id="btn-import" class="btn secondary">Importar JSON</button>
+          <button id="btn-export" class="btn primary">Exportar JSON</button>
+          <input id="file-import" type="file" accept="application/json" class="file-input" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 3: CONFIGURAÇÕES -->
+    <section id="tab-settings" class="section">
+      <div class="settings-grid">
+        <div class="setting">
+          <label class="hint">Som de Conclusão</label>
+          <div style="display: flex; gap: 6px; align-items: flex-end;">
+            <select id="soundSelect" class="select" style="flex: 1;">
+              <option value="sparkle">✨ Sparkle</option>
+              <option value="bell">🔔 Bell</option>
+              <option value="chime">🎵 Chime</option>
+            </select>
+            <button id="btn-test-sound" class="btn glass" style="padding: 8px 10px; font-size: 12px; flex: 0 0 auto; white-space: nowrap;">🔊 Testar</button>
+          </div>
+        </div>
+        <div class="setting">
+          <label class="hint">Volume: <span id="volumeValue">70</span>%</label>
+          <input id="volumeSlider" type="range" min="0" max="100" value="70" />
+        </div>
+        <div class="divider"></div>
+        <div class="setting">
+          <label class="hint">Idioma</label>
+          <select id="languageSelect" class="select">
+            <option value="pt-BR">Português (BR)</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
+        </div>
+        <div class="divider"></div>
+        <div class="setting">
+          <label class="hint">🎵 Spotify</label>
+          <button id="btn-spotify-connect" class="btn primary" style="width: 100%; padding: 8px; font-size: 13px;">Conectar Spotify</button>
+          <div id="spotify-status" class="hint" style="text-align: center; margin-top: 4px; color: var(--accent);">Não conectado</div>
+        </div>
+        <div class="divider"></div>
+        <div class="setting">
+          <div class="toggle">
+            <label class="hint">Tema: <span id="themeLabel">Escuro</span></label>
+            <input id="themeToggle" type="checkbox" class="switch" checked />
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="chart.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
