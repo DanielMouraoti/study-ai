@@ -16,14 +16,36 @@ yarn-error.log*
 *.swp
 *.swo
 
+# Documentação de Desenvolvimento (não incluir no repositório)
+# Mantemos apenas README.md e LICENSE
+*.md
+!README.md
+!LICENSE.md
+!.github/**/*.md
+
+# Arquivos de Teste e Debug
+TESTE_*.md
+TESTE_*.txt
+DEBUG_*.md
+DEBUG_*.txt
+
+# Documentação de Implementação/Histórico
+IMPLEMENTACAO_*.md
+CORRECOES_*.md
+AUDIO_*.md
+RESUME_*.md
+RESUMO_*.md
+FASE_*.md
+PHASE_*.md
+CHECKLIST_*.txt
+GUIA_*.md
+MANUAL_*.md
+
+# Scripts de Geração
+generate_sounds.py
+
 # Nota: Os arquivos MP3 em assets/ devem ser gerados localmente
 # Use generate_sounds.py para criar os sons ou baixe de fontes gratuitas
-
-# Documentação Temporária / Rascunhos
-*_OLD.md
-*_DRAFT.md
-TESTE_*.txt
-RASCUNHO_*.md
 
 # Arquivos Sensíveis (não commitar chaves/tokens)
 .env
@@ -48,6 +70,8 @@ config.local.js
 settings.local.json
 
 # Chrome Extension Build
+*.zip
+*.crx
 *.crx
 *.pem
 *.zip

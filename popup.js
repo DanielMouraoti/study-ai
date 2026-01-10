@@ -3,6 +3,68 @@
  * Manifest V3 compatible with robust error handling
  */
 (function() {
+  // ----- Traduções (PT-BR e EN) -----
+  const TRANSLATIONS = {
+    'pt-BR': {
+      appTitle: 'Study AI',
+      focusTab: '🧠 Foco',
+      statsTab: '📈 Estatísticas',
+      settingsTab: '⚙️ Configurações',
+      startBtn: 'Iniciar',
+      pauseBtn: 'Pausar',
+      resetBtn: 'Resetar',
+      timerMode: 'Modo do Timer',
+      studyTheme: 'Tema de Estudo',
+      focus25m: 'Foco (25m)',
+      shortBreak5m: 'Pausa Curta (5m)',
+      longBreak15m: 'Pausa Longa (15m)',
+      currentTheme: 'Tema atual:',
+      customizeTheme: 'Digite seu tema personalizado...',
+      pressEnter: 'Pressione Enter para salvar',
+      settings: 'Configurações',
+      soundType: 'Tipo de Som',
+      volume: 'Volume',
+      testSound: '🔊 Testar',
+      theme: 'Tema',
+      darkMode: 'Escuro',
+      lightMode: 'Claro',
+      language: 'Idioma',
+      portuguese: 'Português',
+      english: 'English',
+      weeklyStats: 'Estatísticas Semanais',
+      sessionsByCategory: 'Sessões por Categoria'
+    },
+    'en': {
+      appTitle: 'Study AI',
+      focusTab: '🧠 Focus',
+      statsTab: '📈 Stats',
+      settingsTab: '⚙️ Settings',
+      startBtn: 'Start',
+      pauseBtn: 'Pause',
+      resetBtn: 'Reset',
+      timerMode: 'Timer Mode',
+      studyTheme: 'Study Theme',
+      focus25m: 'Focus (25m)',
+      shortBreak5m: 'Short Break (5m)',
+      longBreak15m: 'Long Break (15m)',
+      currentTheme: 'Current theme:',
+      customizeTheme: 'Enter your custom theme...',
+      pressEnter: 'Press Enter to save',
+      settings: 'Settings',
+      soundType: 'Sound Type',
+      volume: 'Volume',
+      testSound: '🔊 Test',
+      theme: 'Theme',
+      darkMode: 'Dark',
+      lightMode: 'Light',
+      language: 'Language',
+      portuguese: 'Português',
+      english: 'English',
+      weeklyStats: 'Weekly Statistics',
+      sessionsByCategory: 'Sessions by Category'
+    }
+  };
+
   // ----- Estado -----
   const State = {
     currentMode: 'focus',
@@ -16,6 +78,12 @@
     customCategories: [],
     currentCategory: 'Programação',
     charts: { weekly: null, category: null },
+  };
+
+  // Tradução auxiliar
+  const t = (key) => {
+    const translations = TRANSLATIONS[State.language] || TRANSLATIONS['pt-BR'];
+    return translations[key] || key;
   };
 
   // Utilities
@@ -41,6 +109,81 @@
     chrome.storage.local.set({ activeTab: tab });
     document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === `tab-${tab}`));
+  }
+
+  // ----- Sistema de Idiomas -----
+  async function updateLanguage(lang) {
+    console.log(`[Popup] 🌐 Atualizando idioma para: ${lang}`);
+    
+    State.language = lang;
+    await chrome.storage.local.set({ language: lang });
+    
+    // Atualizar abas
+    const tabButtons = document.querySelectorAll('.tab');
+    const tabNames = {
+      'focus': t('focusTab'),
+      'stats': t('statsTab'),
+      'settings': t('settingsTab')
+    };
+    
+    tabButtons.forEach(btn => {
+      const tabName = btn.dataset.tab;
+      if (tabNames[tabName]) {
+        const span = btn.querySelector('span');
+        if (span) span.textContent = tabNames[tabName].split(' ').slice(1).join(' ');
+      }
+    });
+    
+    // Atualizar botões
+    const btnStartPause = $('btn-start-pause');
+    if (btnStartPause) btnStartPause.textContent = State.isRunning ? t('pauseBtn') : t('startBtn');
+    
+    const btnReset = $('btn-reset');
+    if (btnReset) btnReset.textContent = t('resetBtn');
+    
+    const testBtn = document.querySelector('[id*="test"]') || document.querySelector('button:contains("🔊")');
+    // Atualizar labels
+    document.querySelectorAll('.hint').forEach(hint => {
+      const text = hint.textContent;
+      if (text.includes('Modo')) hint.textContent = t('timerMode');
+      if (text.includes('Tema')) hint.textContent = t('studyTheme');
+      if (text.includes('Som')) hint.textContent = t('soundType');
+      if (text.includes('Volume')) hint.textContent = t('volume');
+    });
+    
+    console.log(`[Popup] ✅ Idioma atualizado: ${lang}`);
+  }
+
+  function setupLanguageButtons() {
+    console.log('[Popup] 🌐 Configurando botões de idioma');
+    
+    // Procurar por botões de bandeira (PT e EN)
+    const langBtns = document.querySelectorAll('[data-lang]');
+    if (langBtns.length === 0) {
+      console.warn('[Popup] ⚠️ Nenhum botão de idioma encontrado');
+      return;
+    }
+    
+    // Marcar botão ativo
+    langBtns.forEach(btn => {
+      if (btn.dataset.lang === State.language) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+      
+      btn.addEventListener('click', async () => {
+        const lang = btn.dataset.lang;
+        
+        // Atualizar botões ativos
+        langBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        await updateLanguage(lang);
+      });
+    });
+    
+    console.log(`[Popup] ✅ ${langBtns.length} botões de idioma configurados`);
   }
 
   // Background Communication (with retry logic)
@@ -442,7 +585,15 @@
   // ----- Bootstrap -----
   document.addEventListener('DOMContentLoaded', async () => {
     console.log('[Popup] 🚀 Inicializando...');
-    setupAudioUnlock(); // Configurar desbloqueio
+    
+    // Carregar idioma armazenado
+    const savedLang = await chrome.storage.local.get('language');
+    if (savedLang.language) {
+      State.language = savedLang.language;
+    }
+    
+    setupAudioUnlock(); // Configurar desbloqueio de áudio
+    setupLanguageButtons(); // Configurar botões de idioma
     await loadSettings();
     await loadCategories();
     setupListeners();
