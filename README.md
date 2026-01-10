@@ -226,10 +226,10 @@ Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) par
 
 ## 👨‍💻 Autor
 
-Desenvolvido com 💙 e ☕ por **[Seu Nome]**
+Desenvolvido com 💙 e ☕ por **[Daniel Mourão Lopes]**
 
-- GitHub: [@seu-usuario](https://github.com/seu-usuario)
-- LinkedIn: [Seu Perfil](https://linkedin.com/in/seu-perfil)
+- GitHub: [@DanielMouraoti](https://github.com/seu-usuario)
+- LinkedIn: [Daniel Mourão](https://linkedin.com/in/daniel-mourão-backend)
 
 ---
 
