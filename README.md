@@ -228,7 +228,7 @@ Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) par
 
 Desenvolvido com 💙 e ☕ por **[Daniel Mourão Lopes]**
 
-- GitHub: [@DanielMouraoti](https://github.com/seu-usuario)
+- GitHub: [@DanielMouraoti](https://github.com/DanielMouraoti)
 - LinkedIn: [Daniel Mourão](https://linkedin.com/in/daniel-mourão-backend)
 
 ---
