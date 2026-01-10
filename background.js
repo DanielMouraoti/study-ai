@@ -11,7 +11,8 @@ let timerState = {
   timeRemaining: MODES.focus,
   isRunning: false,
   mode: 'focus',
-  lastUpdated: Date.now()
+  lastUpdated: Date.now(),
+  endTime: null // Timestamp absoluto de quando o timer deve acabar
 };
 
 let timerInterval = null;
@@ -87,20 +88,23 @@ function stopInterval() {
 }
 
 async function tick() {
-  const now = Date.now();
-  const elapsedSeconds = Math.floor((now - timerState.lastUpdated) / 1000);
-  if (elapsedSeconds <= 0) return;
+  if (!timerState.isRunning || !timerState.endTime) return;
 
-  timerState.timeRemaining = Math.max(0, timerState.timeRemaining - elapsedSeconds);
+  const now = Date.now();
+  const remainingMs = timerState.endTime - now;
+  
+  // Calcular segundos restantes com Math.ceil para evitar "quebra" visual
+  timerState.timeRemaining = Math.max(0, Math.ceil(remainingMs / 1000));
   timerState.lastUpdated = now;
   
-  console.log('[BG] tick:', timerState.timeRemaining, 'segundos');
+  console.log('[BG] tick:', timerState.timeRemaining, 'segundos restantes');
 
-  if (timerState.timeRemaining <= 0) {
+  if (remainingMs <= 0) {
     // Registrar sessão concluída antes de resetar (apenas se for modo de foco)
     await recordSessionCompletion();
     timerState.isRunning = false;
     timerState.timeRemaining = MODES[timerState.mode] || MODES.focus;
+    timerState.endTime = null;
     stopInterval();
     // Tocar som de conclusão
     await playTimerFinishedSound();
@@ -120,14 +124,24 @@ function ensureInterval() {
 
 // ----- Ações -----
 async function startTimer() {
+  const now = Date.now();
   timerState.isRunning = true;
-  timerState.lastUpdated = Date.now();
+  timerState.lastUpdated = now;
+  // Calcular timestamp absoluto de quando o timer deve acabar
+  timerState.endTime = now + (timerState.timeRemaining * 1000);
   await saveState();
   ensureInterval();
 }
 
 async function pauseTimer() {
+  // Atualizar timeRemaining antes de pausar (baseado em endTime)
+  if (timerState.endTime) {
+    const now = Date.now();
+    const remainingMs = timerState.endTime - now;
+    timerState.timeRemaining = Math.max(0, Math.ceil(remainingMs / 1000));
+  }
   timerState.isRunning = false;
+  timerState.endTime = null;
   await saveState();
   ensureInterval();
 }
@@ -137,6 +151,7 @@ async function resetTimer(mode) {
   timerState.mode = newMode;
   timerState.timeRemaining = MODES[newMode] || MODES.focus;
   timerState.isRunning = false;
+  timerState.endTime = null;
   timerState.lastUpdated = Date.now();
   await saveState();
   ensureInterval();
@@ -148,65 +163,108 @@ async function setMode(mode) {
 
 // ----- Audio Functions -----
 async function ensureOffscreenDocument() {
+  console.log('[BG] 🔍 Verificando offscreen document...');
+  
   try {
+    // Verificar se já existe
     const existingClients = await chrome.runtime.getContexts({
       contextTypes: ['OFFSCREEN_DOCUMENT'],
       documentUrls: [chrome.runtime.getURL('offscreen.html')]
     });
 
     if (existingClients.length > 0) {
+      console.log('[BG] ✅ Offscreen document já existe');
       return true;
     }
 
+    console.log('[BG] 📄 Criando offscreen document...');
+    
     await chrome.offscreen.createDocument({
       url: 'offscreen.html',
-      reasons: ['AUDIO_PLAYBACK']
+      reasons: ['AUDIO_PLAYBACK'],
+      justification: 'Reprodução de sons de notificação do timer'
     });
 
-    console.log('[BG] Offscreen document criado');
+    console.log('[BG] ✅ Offscreen document criado com sucesso');
     return true;
+    
   } catch (error) {
-    if (error.message?.includes('offscreen document already exists')) {
+    // Erro esperado se já existe
+    if (error.message?.includes('offscreen document already exists') || 
+        error.message?.includes('Only a single offscreen')) {
+      console.log('[BG] ✅ Offscreen já existe (erro esperado)');
       return true;
     }
-    console.warn('[BG] Erro ao criar offscreen:', error);
+    
+    console.error('[BG] ❌ Erro ao criar offscreen:', error);
     return false;
   }
 }
 
 async function playTimerFinishedSound() {
+  console.log('[BG] 🔔 Timer finalizado, iniciando som...');
+  
   try {
-    await ensureOffscreenDocument();
+    // Garantir offscreen existe
+    const offscreenOk = await ensureOffscreenDocument();
+    if (!offscreenOk) {
+      console.error('[BG] ❌ Falha ao criar offscreen');
+      return;
+    }
+    
+    // Obter configurações
     const data = await chrome.storage.local.get(['soundType', 'volume']);
     const soundType = data.soundType || 'sparkle';
     const volume = data.volume !== undefined ? data.volume : 70;
     
-    // Enviar mensagem para offscreen document tocar o som
-    chrome.runtime.sendMessage({
+    console.log(`[BG] 📤 Enviando mensagem: soundType=${soundType}, volume=${volume}`);
+    
+    // Enviar mensagem para offscreen
+    const response = await chrome.runtime.sendMessage({
       action: 'playTimerFinishedSound',
       soundType,
       volume
-    }).catch(err => {
-      console.warn('[BG] Erro ao enviar mensagem de som:', err);
     });
+    
+    if (response && response.success) {
+      console.log('[BG] ✅ Som tocado com sucesso');
+    } else {
+      console.warn('[BG] ⚠️ Resposta indica falha:', response);
+    }
+    
   } catch (e) {
-    console.warn('[BG] Erro ao tocar som:', e);
+    console.error('[BG] ❌ Erro ao tocar som timer:', e);
   }
 }
 
 async function playTestSound(soundType, volume) {
+  console.log(`[BG] 🧪 Teste de som: ${soundType}, volume: ${volume}`);
+  
   try {
-    await ensureOffscreenDocument();
-    // Enviar mensagem para offscreen document tocar o som
-    chrome.runtime.sendMessage({
+    // Garantir offscreen existe
+    const offscreenOk = await ensureOffscreenDocument();
+    if (!offscreenOk) {
+      console.error('[BG] ❌ Falha ao criar offscreen');
+      return;
+    }
+    
+    console.log('[BG] 📤 Enviando mensagem de teste...');
+    
+    // Enviar mensagem para offscreen
+    const response = await chrome.runtime.sendMessage({
       action: 'testSound',
       soundType: soundType || 'sparkle',
       volume: volume !== undefined ? volume : 70
-    }).catch(err => {
-      console.warn('[BG] Erro ao enviar mensagem de som de teste:', err);
     });
+    
+    if (response && response.success) {
+      console.log('[BG] ✅ Teste de som concluído com sucesso');
+    } else {
+      console.warn('[BG] ⚠️ Teste falhou:', response);
+    }
+    
   } catch (e) {
-    console.warn('[BG] Erro ao tocar som de teste:', e);
+    console.error('[BG] ❌ Erro no teste de som:', e);
   }
 }
 

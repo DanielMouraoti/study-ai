@@ -15,16 +15,15 @@
   "background": {
     "service_worker": "background.js"
   },
-  "offscreen_documents": [
-    {
-      "document": "offscreen.html",
-      "matches": ["https://*//*"],
-      "reasons": ["AUDIO_PLAYBACK"]
-    }
-  ],
   "permissions": ["storage", "alarms", "offscreen", "identity"],
   "host_permissions": [
     "https://api.spotify.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["offscreen.html"],
+      "matches": ["<all_urls>"]
+    }
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.spotify.com https://accounts.spotify.com"

@@ -16,6 +16,9 @@ yarn-error.log*
 *.swp
 *.swo
 
+# Nota: Os arquivos MP3 em assets/ devem ser gerados localmente
+# Use generate_sounds.py para criar os sons ou baixe de fontes gratuitas
+
 # Documentação Temporária / Rascunhos
 *_OLD.md
 *_DRAFT.md

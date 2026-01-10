@@ -20,7 +20,12 @@
 
   // Utilities
   const $ = (id) => document.getElementById(id);
-  const fmtTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  const fmtTime = (s) => {
+    const totalSeconds = Math.ceil(s); // Arredondar para cima para evitar "quebra" visual
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
   const getISOWeek = (date) => {
     const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
     const dayNum = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - dayNum);
@@ -399,16 +404,54 @@
     });
   }
 
+  // ----- Sistema de Desbloqueio de Áudio -----
+  let audioUnlocked = false;
+
+  async function unlockAudio() {
+    if (audioUnlocked) return;
+    
+    console.log('[Popup] 🔓 Desbloqueando áudio...');
+    
+    try {
+      // Enviar comando de desbloqueio para offscreen
+      const response = await sendMessage({ action: 'unlockAudio' });
+      if (response && response.success) {
+        audioUnlocked = true;
+        console.log('[Popup] ✅ Áudio desbloqueado com sucesso');
+      }
+    } catch (e) {
+      console.warn('[Popup] ⚠️ Falha ao desbloquear (será tentado novamente):', e);
+    }
+  }
+
+  // Adicionar listener global para desbloquear no primeiro clique
+  function setupAudioUnlock() {
+    const unlockOnInteraction = () => {
+      unlockAudio();
+      // Remover listener após primeira interação
+      document.removeEventListener('click', unlockOnInteraction);
+      document.removeEventListener('keydown', unlockOnInteraction);
+    };
+    
+    document.addEventListener('click', unlockOnInteraction);
+    document.addEventListener('keydown', unlockOnInteraction);
+    
+    console.log('[Popup] 🎧 Sistema de desbloqueio configurado');
+  }
+
   // ----- Bootstrap -----
   document.addEventListener('DOMContentLoaded', async () => {
+    console.log('[Popup] 🚀 Inicializando...');
+    setupAudioUnlock(); // Configurar desbloqueio
     await loadSettings();
     await loadCategories();
     setupListeners();
     await fullSync();
     await updateSpotifyPanel();
     try { await refreshCharts(); } catch(e) { console.warn('[Popup] refreshCharts falhou no bootstrap:', e); }
-    setInterval(pollTimer, 300);
+    setInterval(pollTimer, 200); // 200ms para transição visual suave e sem delay
     setInterval(updateSpotifyPanel, 5000); // Atualizar painel Spotify a cada 5s
+    console.log('[Popup] ✅ Inicialização completa');
   });
 
 })();
