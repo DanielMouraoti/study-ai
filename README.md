@@ -16,6 +16,29 @@
 
 ## 📖 Sobre o Projeto
 
+---
+
+## 📸 Demonstração Visual
+
+Aqui está uma prévia da interface e das funcionalidades principais da extensão:
+
+<div align="center">
+  <table style="width:100%">
+    <tr>
+      <td align="center" style="width:50%">
+        <strong>⏱️ Timer de Foco</strong><br/>
+        <img src="./assets/img/timer-focus.png" width="350px" alt="Timer de Foco">
+      </td>
+      <td align="center" style="width:50%">
+        <strong>⚙️ Configurações e Idiomas</strong><br/>
+        <img src="./assets/img/settings-language.png" width="350px" alt="Configurações">
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
 **Study AI** é uma extensão para Chrome que implementa a técnica Pomodoro com recursos avançados de análise e personalização. O projeto foi desenvolvido com **assistência de IA (GitHub Copilot)**, demonstrando como ferramentas de IA podem acelerar o desenvolvimento de software moderno.
 
 ### 🎯 Filosofia de Desenvolvimento
