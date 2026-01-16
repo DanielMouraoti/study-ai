@@ -34,6 +34,14 @@ Aqui está uma prévia da interface e das funcionalidades principais da extensã
         <img src="./assets/img/settings-language.png" width="350px" alt="Configurações">
       </td>
     </tr>
+    <tr>
+      <td align="center" colspan="2">
+        <br/>
+        <strong>📊 Dashboard de Produtividade (Métricas de Estudo)</strong><br/>
+        <img src="./assets/img/dashboard-productivity.png" width="450px" alt="Dashboard de Produtividade">
+        <p><em>Acompanhamento detalhado do tempo dedicado por categoria com suporte a i18n.</em></p>
+      </td>
+    </tr>
   </table>
 </div>
 
