@@ -1,0 +1,13 @@
+{
+  "productivityTitle": { "message": "📊 Productivity" },
+  "languages": { "message": "Languages" },
+  "music": { "message": "Music" },
+  "noCategory": { "message": "No category" },
+  "sunday":   { "message": "Sun" },
+  "monday":   { "message": "Mon" },
+  "tuesday":  { "message": "Tue" },
+  "wednesday":{ "message": "Wed" },
+  "thursday": { "message": "Thu" },
+  "friday":   { "message": "Fri" },
+  "saturday": { "message": "Sat" }
+}

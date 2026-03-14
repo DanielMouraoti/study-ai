@@ -54,17 +54,6 @@ Este projeto é um exemplo prático de desenvolvimento assistido por IA, onde:
 - Controles de reprodução direto no timer
 - Sincronização com suas playlists
 
-### ⚡ **Quick Start Spotify**
-1. Crie um app no Spotify Developer Dashboard.
-2. Configure a Redirect URI da extensão (`chrome.identity.getRedirectURL()`).
-3. Informe o Client ID em **Configurações > Spotify** no popup.
-4. Clique em **Conectar Spotify** e autorize.
-5. Abra o Spotify em algum dispositivo para usar play/pause/next/prev.
-
-Documentação completa:
-- [docs/SPOTIFY_INTEGRATION.md](docs/SPOTIFY_INTEGRATION.md)
-- [docs/MESSAGE_CONTRACT.md](docs/MESSAGE_CONTRACT.md)
-
 ---
 
 ## 🚀 Tecnologias Utilizadas

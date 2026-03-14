@@ -560,9 +560,6 @@
     
     // 8. Recarregar categorias para atualizar opções do select
     await loadCategories();
-
-    // 9. Atualizar status Spotify no idioma atual
-    await updateSpotifyConnectionStatus();
   }
 
   function setupLanguageListener() {
@@ -597,16 +594,14 @@
           chrome.runtime.sendMessage(message),
           new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000))
         ]);
-        if (response) return response;
+        if (response && response.success) return response;
         if (attempt < maxRetries) await new Promise(r => setTimeout(r, 100 * attempt));
       } catch (err) {
         if (attempt < maxRetries) await new Promise(r => setTimeout(r, 100 * attempt));
-        if (attempt >= maxRetries) {
-          return { success: false, error: 'Falha de comunicação com o serviço em background.' };
-        }
+        if (attempt >= maxRetries) return null;
       }
     }
-    return { success: false, error: 'Falha de comunicação com o serviço em background.' };
+    return null;
   }
 
   // Função auxiliar para atualizar texto do botão Start/Pause com tradução
@@ -1018,231 +1013,22 @@
   }
 
   // ----- Spotify Panel -----
-  let spotifyPollIntervalId = null;
-  let spotifyUpdateInFlight = false;
-  let spotifyLastUpdateAt = 0;
-  const SPOTIFY_MIN_REFRESH_GAP_MS = 1500;
-
-  function getSpotifyTexts() {
-    const isEnglish = State.language === 'en';
-    return {
-      notConfigured: isEnglish ? 'Not configured' : 'Não configurado',
-      connected: isEnglish ? 'Connected' : 'Conectado',
-      disconnected: isEnglish ? 'Not connected' : 'Não conectado',
-      tokenExpired: isEnglish ? 'Token expired' : 'Token expirado',
-      noDevice: isEnglish ? 'Open Spotify on a device' : 'Abra o Spotify em um dispositivo',
-      noTrack: isEnglish ? 'No track playing' : 'Nenhuma música tocando',
-      unknownArtist: isEnglish ? 'Unknown' : 'Desconhecido',
-      saveClientIdOk: isEnglish ? 'Client ID saved' : 'Client ID salvo',
-      sourceStorage: isEnglish ? 'source: popup config' : 'fonte: configuração no popup',
-      sourceManifest: isEnglish ? 'source: manifest fallback' : 'fonte: fallback do manifest',
-      sourceNone: isEnglish ? 'source: not set' : 'fonte: não configurada',
-      redirectLabel: 'Redirect URI:',
-      reconnectHint: isEnglish ? 'Click Connect Spotify' : 'Clique em Conectar Spotify',
-      connectInProgress: isEnglish ? 'Connecting…' : 'Conectando…'
-    };
-  }
-
-  function formatSpotifyExpiry(expiresAt) {
-    if (!expiresAt) return '';
-    try {
-      return new Date(expiresAt).toLocaleTimeString(State.language === 'en' ? 'en-US' : 'pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch (_) {
-      return '';
-    }
-  }
-
-  function setSpotifyControlsDisabled(disabled) {
-    ['btn-spotify-prev', 'btn-spotify-play', 'btn-spotify-next'].forEach(id => {
-      const button = $(id);
-      if (button) button.disabled = !!disabled;
-    });
-  }
-
-  function setSpotifyPanelVisible(visible) {
-    const panelEl = $('spotify-panel');
-    if (panelEl) panelEl.style.display = visible ? 'block' : 'none';
-  }
-
-  function setSpotifyPanelMessage(message) {
-    const panelMsgEl = $('spotify-panel-message');
-    if (!panelMsgEl) return;
-    panelMsgEl.textContent = message || '';
-    panelMsgEl.style.display = message ? 'block' : 'none';
-  }
-
-  async function loadSpotifyConfigIntoUI() {
-    const input = $('spotify-client-id');
-    const redirectEl = $('spotify-redirect-url');
-    if (!input || !redirectEl) return;
-
-    const resp = await sendMessage({ action: 'getSpotifyConfig' });
-    if (!resp || !resp.success) {
-      redirectEl.textContent = '';
-      return;
-    }
-
-    const localData = await chrome.storage.local.get(['spotifyClientId']);
-    input.value = localData.spotifyClientId || '';
-
-    const txt = getSpotifyTexts();
-    const sourceLabel = resp.clientIdSource === 'storage'
-      ? txt.sourceStorage
-      : (resp.clientIdSource === 'manifest' ? txt.sourceManifest : txt.sourceNone);
-
-    redirectEl.textContent = `${txt.redirectLabel} ${resp.redirectUrl} (${sourceLabel})`;
-  }
-
-  async function updateSpotifyConnectionStatus() {
-    const spotifyStatusEl = $('spotify-status');
-    if (!spotifyStatusEl) return { configured: false, connected: false, tokenExpired: false, expiresAt: null };
-
-    const txt = getSpotifyTexts();
-    const response = await sendMessage({ action: 'spotifyStatus' });
-    if (!response || !response.success) {
-      spotifyStatusEl.textContent = `❌ ${response?.error || 'Erro no Spotify'}`;
-      spotifyStatusEl.style.color = '#ef4444';
-      setSpotifyControlsDisabled(true);
-      return { configured: false, connected: false, tokenExpired: false, expiresAt: null };
-    }
-
-    const sourceText = response.clientIdSource === 'storage'
-      ? txt.sourceStorage
-      : (response.clientIdSource === 'manifest' ? txt.sourceManifest : txt.sourceNone);
-
-    if (!response.configured) {
-      spotifyStatusEl.textContent = `⚠️ ${txt.notConfigured} · ${sourceText}`;
-      spotifyStatusEl.style.color = '#f59e0b';
-      setSpotifyControlsDisabled(true);
-      return response;
-    }
-
-    if (!response.connected) {
-      if (response.tokenExpired) {
-        spotifyStatusEl.textContent = `⚠️ ${txt.tokenExpired} · ${txt.reconnectHint}`;
-        spotifyStatusEl.style.color = '#f59e0b';
-      } else {
-        spotifyStatusEl.textContent = `${txt.disconnected} · ${txt.reconnectHint}`;
-        spotifyStatusEl.style.color = 'var(--accent)';
-      }
-      setSpotifyControlsDisabled(true);
-      return response;
-    }
-
-    const exp = formatSpotifyExpiry(response.expiresAt);
-    spotifyStatusEl.textContent = exp
-      ? `✅ ${txt.connected} (expira ${exp})`
-      : `✅ ${txt.connected}`;
-    spotifyStatusEl.style.color = '#10b981';
-    return response;
-  }
-
   async function updateSpotifyPanel() {
-    if (spotifyUpdateInFlight) return;
-
-    const now = Date.now();
-    if (now - spotifyLastUpdateAt < SPOTIFY_MIN_REFRESH_GAP_MS) return;
-
-    spotifyUpdateInFlight = true;
-    spotifyLastUpdateAt = now;
-
-    const trackNameEl = $('spotify-track-name');
-    const artistNameEl = $('spotify-artist-name');
-    const playBtnEl = $('btn-spotify-play');
-
-    if (!trackNameEl || !artistNameEl) {
-      spotifyUpdateInFlight = false;
-      return;
-    }
-
     try {
-      const txt = getSpotifyTexts();
-      const status = await updateSpotifyConnectionStatus();
-
-      if (!status.configured || !status.connected) {
-        setSpotifyPanelVisible(false);
-        trackNameEl.textContent = txt.noTrack;
-        artistNameEl.textContent = '';
-        setSpotifyPanelMessage('');
-        setSpotifyControlsDisabled(true);
-        return;
+      const response = await sendMessage({ action: 'getCurrentTrack' });
+      if (response && response.track) {
+        const track = response.track;
+        const isEnglish = State.language === 'en';
+        $('spotify-track-name').textContent = track.name || (isEnglish ? 'No music' : 'Nenhuma música');
+        $('spotify-artist-name').textContent = track.artist || 'Unknown';
+        $('spotify-panel').style.display = 'block';
+        $('spotify-play').textContent = track.isPlaying ? '⏸️' : '▶️';
+      } else {
+        $('spotify-panel').style.display = 'none';
       }
-
-      const playback = await sendMessage({ action: 'getSpotifyPlaybackState' });
-      if (!playback || !playback.success) {
-        setSpotifyPanelVisible(true);
-        trackNameEl.textContent = txt.noTrack;
-        artistNameEl.textContent = txt.unknownArtist;
-        setSpotifyPanelMessage(playback?.error || 'Erro ao carregar Spotify');
-        setSpotifyControlsDisabled(true);
-        return;
-      }
-
-      setSpotifyPanelVisible(true);
-
-      if (!playback.hasActiveDevice) {
-        trackNameEl.textContent = txt.noTrack;
-        artistNameEl.textContent = '';
-        setSpotifyPanelMessage(playback.message || txt.noDevice);
-        setSpotifyControlsDisabled(true);
-        return;
-      }
-
-      if (playback.track) {
-        trackNameEl.textContent = playback.track.name || txt.noTrack;
-        artistNameEl.textContent = playback.track.artist || txt.unknownArtist;
-        setSpotifyPanelMessage('');
-        setSpotifyControlsDisabled(false);
-        if (playBtnEl) {
-          playBtnEl.textContent = playback.track.isPlaying ? '⏸️' : '▶️';
-        }
-        return;
-      }
-
-      trackNameEl.textContent = txt.noTrack;
-      artistNameEl.textContent = '';
-      setSpotifyPanelMessage(playback.message || txt.noDevice);
-      setSpotifyControlsDisabled(true);
-      if (playBtnEl) playBtnEl.textContent = '▶️';
-    } finally {
-      spotifyUpdateInFlight = false;
+    } catch (e) {
+      console.warn('[Popup] Falha ao atualizar painel Spotify:', e);
     }
-  }
-
-  async function forceUpdateSpotifyPanel() {
-    spotifyLastUpdateAt = 0;
-    await updateSpotifyPanel();
-  }
-
-  function startSpotifyPolling() {
-    if (spotifyPollIntervalId) clearInterval(spotifyPollIntervalId);
-    spotifyPollIntervalId = setInterval(() => {
-      updateSpotifyPanel();
-    }, 5000);
-  }
-
-  async function saveSpotifyClientIdFromInput() {
-    const input = $('spotify-client-id');
-    const spotifyStatusEl = $('spotify-status');
-    if (!input || !spotifyStatusEl) return;
-
-    const txt = getSpotifyTexts();
-    const clientId = (input.value || '').trim();
-    const response = await sendMessage({ action: 'setSpotifyClientId', clientId });
-
-    if (!response || !response.success) {
-      spotifyStatusEl.textContent = `❌ ${response?.error || 'Falha ao salvar Client ID'}`;
-      spotifyStatusEl.style.color = '#ef4444';
-      return;
-    }
-
-    spotifyStatusEl.textContent = `✅ ${txt.saveClientIdOk}`;
-    spotifyStatusEl.style.color = '#10b981';
-    await loadSpotifyConfigIntoUI();
-    await updateSpotifyPanel();
   }
 
   // ----- Carregar Estatísticas de Estudo -----
@@ -1484,14 +1270,13 @@
     // Spotify listeners - COM SEGURANÇA
     if ($('btn-spotify-connect')) {
       $('btn-spotify-connect').addEventListener('click', async () => {
-        const texts = getSpotifyTexts();
-        if ($('spotify-status')) {
-          $('spotify-status').textContent = texts.connectInProgress;
-          $('spotify-status').style.color = 'var(--accent)';
-        }
         const response = await sendMessage({ action: 'spotifyAuth' });
         if (response && response.success) {
-          await forceUpdateSpotifyPanel();
+          if ($('spotify-status')) {
+            $('spotify-status').textContent = '✅ Conectado';
+            $('spotify-status').style.color = '#10b981';
+          }
+          if ($('spotify-panel')) $('spotify-panel').style.display = 'block';
         } else {
           if ($('spotify-status')) {
             $('spotify-status').textContent = '❌ Erro: ' + (response?.error || 'desconhecido');
@@ -1501,72 +1286,24 @@
       });
     }
 
-    if ($('btn-spotify-disconnect')) {
-      $('btn-spotify-disconnect').addEventListener('click', async () => {
-        const response = await sendMessage({ action: 'spotifyDisconnect' });
-        if (!response?.success && $('spotify-status')) {
-          $('spotify-status').textContent = `❌ ${response?.error || 'Falha ao desconectar Spotify'}`;
-          $('spotify-status').style.color = '#ef4444';
-        }
-        await forceUpdateSpotifyPanel();
-      });
-    }
-
-    if ($('btn-open-spotify')) {
-      $('btn-open-spotify').addEventListener('click', async () => {
-        const response = await sendMessage({ action: 'openSpotifyWeb' });
-        if (!response?.success && $('spotify-status')) {
-          $('spotify-status').textContent = `❌ ${response?.error || 'Falha ao abrir Spotify'}`;
-          $('spotify-status').style.color = '#ef4444';
-        }
-      });
-    }
-
-    if ($('btn-spotify-client-save')) {
-      $('btn-spotify-client-save').addEventListener('click', async () => {
-        await saveSpotifyClientIdFromInput();
-      });
-    }
-
-    if ($('spotify-client-id')) {
-      $('spotify-client-id').addEventListener('keydown', async (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          await saveSpotifyClientIdFromInput();
-        }
-      });
-    }
-
     if ($('btn-spotify-play')) {
       $('btn-spotify-play').addEventListener('click', async () => {
-        const response = await sendMessage({ action: 'playPause' });
-        if (!response?.success && $('spotify-status')) {
-          $('spotify-status').textContent = `❌ ${response?.error || 'Falha no controle do Spotify'}`;
-          $('spotify-status').style.color = '#ef4444';
-        }
-        await forceUpdateSpotifyPanel();
+        await sendMessage({ action: 'playPause' });
+        updateSpotifyPanel();
       });
     }
 
     if ($('btn-spotify-next')) {
       $('btn-spotify-next').addEventListener('click', async () => {
-        const response = await sendMessage({ action: 'nextTrack' });
-        if (!response?.success && $('spotify-status')) {
-          $('spotify-status').textContent = `❌ ${response?.error || 'Falha no controle do Spotify'}`;
-          $('spotify-status').style.color = '#ef4444';
-        }
-        await forceUpdateSpotifyPanel();
+        await sendMessage({ action: 'nextTrack' });
+        updateSpotifyPanel();
       });
     }
 
     if ($('btn-spotify-prev')) {
       $('btn-spotify-prev').addEventListener('click', async () => {
-        const response = await sendMessage({ action: 'prevTrack' });
-        if (!response?.success && $('spotify-status')) {
-          $('spotify-status').textContent = `❌ ${response?.error || 'Falha no controle do Spotify'}`;
-          $('spotify-status').style.color = '#ef4444';
-        }
-        await forceUpdateSpotifyPanel();
+        await sendMessage({ action: 'prevTrack' });
+        updateSpotifyPanel();
       });
     }
 
@@ -1612,10 +1349,6 @@
       }
       if (changes.customCategories || changes.currentCategory) await loadCategories();
       if (changes.timerState) pollTimer();
-      if (changes.spotifyClientId || changes.spotifyToken || changes.spotifyTokenExpires) {
-        await loadSpotifyConfigIntoUI();
-        await forceUpdateSpotifyPanel();
-      }
     });
   }
 
@@ -1674,10 +1407,8 @@
     
     // Traduções e UI
     await updateLanguage(State.language);
-    await loadSpotifyConfigIntoUI();
-    await updateSpotifyConnectionStatus();
-    await forceUpdateSpotifyPanel();
-    startSpotifyPolling();
+    await updateSpotifyPanel();
+    setInterval(updateSpotifyPanel, 5000);
     
     console.log('[DOMContentLoaded] ✅ Popup inicializado');
   });
