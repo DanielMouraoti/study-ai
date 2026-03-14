@@ -17,38 +17,6 @@
 ## 📖 Sobre o Projeto
 
 **Study AI** é uma extensão para Chrome que implementa a técnica Pomodoro com recursos avançados de análise e personalização. O projeto foi desenvolvido com assistência de IA (GitHub Copilot), demonstrando como ferramentas de IA podem acelerar o desenvolvimento de software moderno.
----
-
-## 📸 Demonstração Visual
-
-Aqui está uma prévia da interface e das funcionalidades principais da extensão:
-
-<div align="center">
-  <table style="width:100%">
-    <tr>
-      <td align="center" style="width:50%">
-        <strong>⏱️ Timer de Foco</strong><br/>
-        <img src="./assets/img/timer-focus.png" width="350px" alt="Timer de Foco">
-      </td>
-      <td align="center" style="width:50%">
-        <strong>⚙️ Configurações e Idiomas</strong><br/>
-        <img src="./assets/img/settings-language.png" width="350px" alt="Configurações">
-      </td>
-    </tr>
-    <tr>
-      <td align="center" colspan="2">
-        <br/>
-        <strong>📊 Dashboard de Produtividade (Métricas de Estudo)</strong><br/>
-        <img src="./assets/img/dashboard-productivity.png" width="450px" alt="Dashboard de Produtividade">
-        <p><em>Acompanhamento detalhado do tempo dedicado por categoria com suporte a i18n.</em></p>
-      </td>
-    </tr>
-  </table>
-</div>
-
----
-
-**Study AI** é uma extensão para Chrome que implementa a técnica Pomodoro com recursos avançados de análise e personalização. O projeto foi desenvolvido com **assistência de IA (GitHub Copilot)**, demonstrando como ferramentas de IA podem acelerar o desenvolvimento de software moderno.
 
 ### 🎯 Filosofia de Desenvolvimento
 
@@ -85,17 +53,6 @@ Este projeto é um exemplo prático de desenvolvimento assistido por IA, onde:
 - Autenticação OAuth 2.0
 - Controles de reprodução direto no timer
 - Sincronização com suas playlists
-
-### ⚡ **Quick Start Spotify**
-1. Crie um app no Spotify Developer Dashboard.
-2. Configure a Redirect URI da extensão (`chrome.identity.getRedirectURL()`).
-3. Informe o Client ID em **Configurações > Spotify** no popup.
-4. Clique em **Conectar Spotify** e autorize.
-5. Abra o Spotify em algum dispositivo para usar play/pause/next/prev.
-
-Documentação completa:
-- [docs/SPOTIFY_INTEGRATION.md](docs/SPOTIFY_INTEGRATION.md)
-- [docs/MESSAGE_CONTRACT.md](docs/MESSAGE_CONTRACT.md)
 
 ---
 
