@@ -210,6 +210,43 @@
       background: var(--accent);
       border-color: var(--accent-strong);
     }
+
+    /* Plano de Estudo */
+    .plan-section { display: grid; gap: 10px; }
+    .exam-countdown {
+      text-align: center;
+      padding: 10px;
+      background: rgba(139, 208, 255, 0.1);
+      border-radius: 10px;
+      border: 1px solid rgba(139, 208, 255, 0.22);
+    }
+    .exam-countdown .days-left {
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.1;
+    }
+    .exam-countdown .days-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .exam-countdown .motivation { font-size: 11px; color: var(--accent); margin-top: 6px; font-weight: 600; }
+    .plan-block {
+      background: rgba(255,255,255,0.06);
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 10px 12px;
+    }
+    .plan-block h3 { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--accent); }
+    .plan-block ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+    .plan-block ul li {
+      font-size: 11px;
+      color: var(--muted);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.4;
+    }
+    .plan-block ul li::before { content: "▸"; position: absolute; left: 0; color: var(--accent); }
+    .plan-block .checklist li { cursor: pointer; user-select: none; transition: color 150ms, opacity 150ms; }
+    .plan-block .checklist li.done { text-decoration: line-through; opacity: 0.45; }
+    .plan-block .checklist li.done::before { content: "✓"; color: #10b981; }
   </style>
 </head>
 <body class="dark">
@@ -226,6 +263,7 @@
       <button class="tab active" data-tab="focus">🧠 <span>Foco</span></button>
       <button class="tab" data-tab="stats">📈 <span>Estatísticas</span></button>
       <button class="tab" data-tab="settings">⚙️ <span>Configurações</span></button>
+      <button class="tab" data-tab="plan">📋 <span>Plano</span></button>
     </nav>
 
     <!-- ABA 1: FOCO -->
@@ -336,6 +374,72 @@
             <input id="themeToggle" type="checkbox" class="switch" checked />
           </div>
         </div>
+      </div>
+    </section>
+    <!-- ABA 4: PLANO DE ESTUDO -->
+    <section id="tab-plan" class="section">
+      <div class="plan-section">
+
+        <!-- Contagem regressiva -->
+        <div class="exam-countdown">
+          <label class="hint" style="margin-bottom:5px; display:block;">📅 Data da Prova</label>
+          <input id="examDateInput" type="date" class="input" style="text-align:center; font-size:13px;" />
+          <div id="countdownDisplay" style="margin-top:8px; display:none;">
+            <div class="days-left" id="daysLeft">0</div>
+            <div class="days-label" id="daysLabel">dias para a prova</div>
+            <div class="motivation" id="examMotivation"></div>
+          </div>
+        </div>
+
+        <!-- Prioridades de Revisão -->
+        <div class="plan-block">
+          <h3>🎯 Prioridades de Revisão</h3>
+          <ul>
+            <li>Conceitos de nuvem: IaaS / PaaS / SaaS, CAPEX / OPEX, público / privado / híbrido</li>
+            <li>Serviços Azure: compute, storage, network</li>
+            <li>Governança e segurança: RBAC, Policy, Defender, SLA</li>
+            <li>Preços: calculadora, TCO, cost management</li>
+            <li>Diferenças sutis: RBAC vs Policy · Monitor vs Advisor · Blob / File / Disk</li>
+            <li>Availability Set vs Availability Zone vs Scale Set</li>
+          </ul>
+        </div>
+
+        <!-- Estratégia de Simulados -->
+        <div class="plan-block">
+          <h3>📝 Estratégia de Simulados</h3>
+          <ul>
+            <li>1 simulado por dia (cronometrado, ~45–60 min)</li>
+            <li>Revise apenas os tópicos que errou — não todo o conteúdo</li>
+            <li>Simule o ambiente real: sem pausas, sem consulta</li>
+            <li>Fontes: MeasureUp, Whizlabs, ExamTopics, Microsoft Learn</li>
+          </ul>
+        </div>
+
+        <!-- Véspera da Prova -->
+        <div class="plan-block">
+          <h3>🌙 Véspera da Prova — Checklist</h3>
+          <ul class="checklist" id="eve-checklist">
+            <li data-key="eve-1">Revisão leve (sem maratona de estudo)</li>
+            <li data-key="eve-2">Confirmar login e acesso à plataforma de prova</li>
+            <li data-key="eve-3">Separar documento com foto (RG / CNH)</li>
+            <li data-key="eve-4">Checar horário e fuso horário da prova</li>
+            <li data-key="eve-5">Preparar ambiente silencioso e webcam funcionando</li>
+            <li data-key="eve-6">Dormir pelo menos 7 horas 😴</li>
+          </ul>
+        </div>
+
+        <!-- Dia da Prova -->
+        <div class="plan-block">
+          <h3>🚀 Dia da Prova — Dicas</h3>
+          <ul>
+            <li>Leia com atenção as palavras-chave: "melhor", "mais econômico", "responsabilidade da Microsoft"</li>
+            <li>Elimine alternativas claramente absurdas antes de decidir</li>
+            <li>Se travar em uma questão, marque e volte depois</li>
+            <li>Gerencie o tempo (≈ 45 questões, ≈ 85 min)</li>
+            <li>Você está preparado — confie no seu estudo! 💪</li>
+          </ul>
+        </div>
+
       </div>
     </section>
   </main>
