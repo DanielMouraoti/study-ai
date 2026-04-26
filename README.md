@@ -231,6 +231,32 @@ study-ai/
 
 ---
 
+## 🎓 GitHub Education — Certificações com Voucher para Estudantes
+
+Se você é estudante verificado no [GitHub Education Student Pack](https://education.github.com/pack), saiba que a **única certificação que costuma ter voucher incluído** é:
+
+| Certificação | Voucher no Student Pack? |
+|---|---|
+| **GitHub Foundations** | ✅ Geralmente disponível (*while supplies last*) |
+| GitHub Actions | ❌ Não incluso normalmente |
+| GitHub Advanced Security | ❌ Não incluso normalmente |
+| GitHub Administration | ❌ Não incluso normalmente |
+| GitHub Copilot | ❌ Não incluso normalmente |
+
+> ⚠️ **Importante:** A disponibilidade do voucher para GitHub Foundations muda com frequência e depende do estoque do momento. Não há uma lista fixa ou garantia permanente de fornecimento.
+
+### Como verificar as ofertas atuais
+
+1. Acesse **[education.github.com/pack](https://education.github.com/pack)**
+2. Confirme que sua conta está como **estudante verificado**
+3. Procure o bloco **GitHub Foundations Certification** na lista de ofertas
+4. Clique em **Claim / Get offer** — se disponível, o código aparecerá ali
+5. Se aparecer *"Essa oferta não está disponível no momento"*, tente novamente em outro dia (1×/dia por alguns dias)
+
+> 💡 **Dica:** Caso o voucher permaneça indisponível por longos períodos, abra um chamado no [suporte do GitHub Education](https://support.github.com/) informando seu username e o erro exibido.
+
+---
+
 ## 🤝 Contribuindo
 
 Contribuições são bem-vindas! Este projeto é open-source e aceita:
