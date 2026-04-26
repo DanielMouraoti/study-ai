@@ -22,6 +22,7 @@ yarn-error.log*
 !README.md
 !LICENSE.md
 !.github/**/*.md
+!docs/*.md
 
 # Arquivos de Teste e Debug
 TESTE_*.md
