@@ -9,7 +9,8 @@
       appTitle: 'Study AI',
       focusTab: '🧠 Foco',
       statsTab: '📈 Estatísticas',
-      settingsTab: '⚙️ Configurações',
+      certTab: '🎓 Certificação',
+      settingsTab: '⚙️ Config',
       startBtn: 'Iniciar',
       pauseBtn: 'Pausar',
       resetBtn: 'Resetar',
@@ -38,7 +39,8 @@
       appTitle: 'Study AI',
       focusTab: '🧠 Focus',
       statsTab: '📈 Stats',
-      settingsTab: '⚙️ Settings',
+      certTab: '🎓 Certification',
+      settingsTab: '⚙️ Config',
       startBtn: 'Start',
       pauseBtn: 'Pause',
       resetBtn: 'Reset',
@@ -123,6 +125,7 @@
     const tabNames = {
       'focus': t('focusTab'),
       'stats': t('statsTab'),
+      'cert': t('certTab'),
       'settings': t('settingsTab')
     };
     

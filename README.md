@@ -85,6 +85,12 @@ Este projeto é um exemplo prático de **desenvolvimento assistido por IA**, ond
 - Controles de reprodução direto no timer
 - Sincronização com suas playlists
 
+### 🎓 **Guia de Certificação GitHub Foundations**
+- Instruções passo a passo em português para agendar o exame usando o voucher do GitHub Education
+- Links diretos para o portal de agendamento PSI e recursos oficiais
+- Cuidados importantes e o que fazer se o voucher não funcionar
+- Disponível na aba **"🎓 Certificação"** da extensão e em [`docs/github-foundations-exam-guide.md`](docs/github-foundations-exam-guide.md)
+
 ---
 
 ## 🚀 Tecnologias Utilizadas
@@ -160,6 +166,12 @@ npm run build
 5. **Tema:** Alterne entre claro/escuro
 6. **Idioma:** Português ou Inglês
 
+### **4️⃣ Guia de Certificação GitHub Foundations**
+1. Clique na aba **"🎓 Certificação"**
+2. Siga o guia passo a passo para obter seu voucher no GitHub Education
+3. Acesse os links diretos para o portal de agendamento PSI
+4. Consulte a seção de cuidados e suporte em caso de problemas com o voucher
+
 ---
 
 ## 📁 Estrutura do Projeto
@@ -168,12 +180,14 @@ npm run build
 study-ai/
 ├── manifest.json          # Configuração da extensão (MV3)
 ├── background.js          # Service Worker (timer, storage, API)
-├── popup.html             # Interface principal (3 abas)
+├── popup.html             # Interface principal (4 abas)
 ├── popup.js               # Lógica do frontend
 ├── offscreen.html         # Documento para áudio (MV3)
 ├── offscreen.js           # Síntese de áudio (Web Audio API)
 ├── chart.js               # Biblioteca Chart.js (local)
 ├── icon.png               # Ícone da extensão
+├── docs/
+│   └── github-foundations-exam-guide.md  # Guia de certificação (PT-BR)
 └── README.md              # Este arquivo
 ```
 

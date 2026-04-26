@@ -210,6 +210,54 @@
       background: var(--accent);
       border-color: var(--accent-strong);
     }
+
+    /* Certification Guide */
+    .cert-guide { display: grid; gap: 12px; }
+    .cert-header h2 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+    .cert-step {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .cert-step-num {
+      flex: 0 0 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(120deg, var(--accent), var(--accent-strong));
+      color: #0a1222;
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cert-step-body { flex: 1; min-width: 0; }
+    .cert-step-body strong { font-size: 12px; display: block; margin-bottom: 3px; }
+    .cert-step-body p { font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .cert-pitfalls h3, .cert-support h3, .cert-resources h3 { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+    .cert-pitfalls ul, .cert-support ul { padding-left: 14px; }
+    .cert-pitfalls li, .cert-support li { font-size: 11px; color: var(--muted); line-height: 1.6; }
+    .cert-divider { height: 1px; background: rgba(255,255,255,0.12); }
+    .cert-link { color: var(--accent); text-decoration: none; }
+    .cert-link:hover { text-decoration: underline; }
+    .cert-resources { display: grid; gap: 6px; }
+    .cert-resource-btn {
+      display: block;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      transition: background 160ms ease;
+    }
+    .cert-resource-btn:hover { background: rgba(255,255,255,0.14); }
   </style>
 </head>
 <body class="dark">
@@ -225,7 +273,8 @@
     <nav class="tabs">
       <button class="tab active" data-tab="focus">🧠 <span>Foco</span></button>
       <button class="tab" data-tab="stats">📈 <span>Estatísticas</span></button>
-      <button class="tab" data-tab="settings">⚙️ <span>Configurações</span></button>
+      <button class="tab" data-tab="cert">🎓 <span>Certificação</span></button>
+      <button class="tab" data-tab="settings">⚙️ <span>Config</span></button>
     </nav>
 
     <!-- ABA 1: FOCO -->
@@ -296,7 +345,99 @@
       </div>
     </section>
 
-    <!-- ABA 3: CONFIGURAÇÕES -->
+    <!-- ABA 3: CERTIFICAÇÃO GitHub Foundations -->
+    <section id="tab-cert" class="section">
+      <div class="cert-guide">
+        <div class="cert-header">
+          <h2>🎓 GitHub Foundations</h2>
+          <p class="hint">Como agendar sua prova usando o voucher do GitHub Education</p>
+        </div>
+
+        <div class="cert-step">
+          <div class="cert-step-num">1</div>
+          <div class="cert-step-body">
+            <strong>Obtenha seu voucher</strong>
+            <p>Acesse <a href="https://education.github.com/experiences/foundations_certificate" target="_blank" class="cert-link">GitHub Education – Foundations Certificate</a> com sua conta GitHub vinculada ao programa Student Developer Pack. O voucher gratuito ficará disponível na página após validação do seu status de estudante.</p>
+          </div>
+        </div>
+
+        <div class="cert-step">
+          <div class="cert-step-num">2</div>
+          <div class="cert-step-body">
+            <strong>Copie o código do voucher</strong>
+            <p>Na página do GitHub Education, clique em <em>"Get your free exam voucher"</em> (ou link equivalente) e copie o código exibido. Guarde-o com segurança — cada voucher é de uso único.</p>
+          </div>
+        </div>
+
+        <div class="cert-step">
+          <div class="cert-step-num">3</div>
+          <div class="cert-step-body">
+            <strong>Acesse o portal de agendamento</strong>
+            <p>Vá para <a href="https://examregistration.github.com/" target="_blank" class="cert-link">examregistration.github.com</a> (plataforma PSI Online, parceira do GitHub). Crie uma conta ou faça login.</p>
+          </div>
+        </div>
+
+        <div class="cert-step">
+          <div class="cert-step-num">4</div>
+          <div class="cert-step-body">
+            <strong>Selecione o exame e aplique o voucher</strong>
+            <p>Encontre o exame <strong>"GitHub Foundations"</strong> e clique em <em>"Schedule"</em>. Na tela de pagamento/checkout, localize o campo <em>"Voucher / Coupon Code"</em> e cole o código copiado. Clique em <em>"Apply"</em> para zerár o valor.</p>
+          </div>
+        </div>
+
+        <div class="cert-step">
+          <div class="cert-step-num">5</div>
+          <div class="cert-step-body">
+            <strong>Escolha data, hora e formato</strong>
+            <p>Selecione entre <strong>Online Proctored</strong> (câmera e ambiente controlado em casa) ou <strong>Test Center</strong> (presencial). Escolha o horário disponível e confirme o agendamento.</p>
+          </div>
+        </div>
+
+        <div class="cert-step">
+          <div class="cert-step-num">6</div>
+          <div class="cert-step-body">
+            <strong>Confirme e prepare-se</strong>
+            <p>Você receberá um e-mail de confirmação com instruções. Chegue 15 minutos antes (ou conecte-se antes) e certifique-se de ter documento com foto e ambiente sem interrupções (para provas online).</p>
+          </div>
+        </div>
+
+        <div class="cert-divider"></div>
+
+        <div class="cert-pitfalls">
+          <h3>⚠️ Cuidados importantes</h3>
+          <ul>
+            <li>Verifique a <strong>data de validade</strong> do voucher — vouchers expirados não podem ser reativados.</li>
+            <li>Use <strong>copiar e colar</strong> para o código do voucher e evite espaços extras.</li>
+            <li>Agende com <strong>pelo menos 24 horas</strong> de antecedência.</li>
+            <li>O voucher é válido para <strong>uma única tentativa</strong>; não é reembolsável.</li>
+            <li>Confirme que o voucher é específico para o exame <em>GitHub Foundations</em>.</li>
+          </ul>
+        </div>
+
+        <div class="cert-divider"></div>
+
+        <div class="cert-support">
+          <h3>🆘 Voucher não funcionou?</h3>
+          <ul>
+            <li>Verifique se o voucher já foi utilizado em outra tentativa.</li>
+            <li>Certifique-se de estar logado no portal PSI com o mesmo e-mail do GitHub Education.</li>
+            <li>Entre em contato com o suporte do GitHub Education via <a href="https://support.github.com" target="_blank" class="cert-link">support.github.com</a>.</li>
+            <li>Para problemas no portal de exame, contate o suporte da PSI diretamente.</li>
+          </ul>
+        </div>
+
+        <div class="cert-divider"></div>
+
+        <div class="cert-resources">
+          <h3>🔗 Links úteis</h3>
+          <a href="https://education.github.com/experiences/foundations_certificate" target="_blank" class="cert-resource-btn">🎓 GitHub Education – Foundations</a>
+          <a href="https://examregistration.github.com/" target="_blank" class="cert-resource-btn">📝 Portal de Agendamento (PSI)</a>
+          <a href="https://github.com/orgs/community/discussions/categories/github-education" target="_blank" class="cert-resource-btn">💬 Comunidade GitHub Education</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 4: CONFIGURAÇÕES -->
     <section id="tab-settings" class="section">
       <div class="settings-grid">
         <div class="setting">
