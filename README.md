@@ -264,6 +264,64 @@ Desenvolvido com 💙 e ☕ por **[Daniel Mourão Lopes]**
 
 ---
 
+## 🎓 GitHub Foundations Certification — Resgate do Voucher
+
+Se você é estudante verificado no [GitHub Education](https://education.github.com/experiences/foundations_certificate) e deseja resgatar o voucher gratuito para o exame de **GitHub Foundations**, siga o guia abaixo.
+
+> **Pré-requisito:** Sua conta GitHub precisa ter a verificação de estudante ativa. Acesse [education.github.com](https://education.github.com) e confirme que o seu status aparece como **"Verified"** antes de continuar.
+
+---
+
+### 🔍 Como encontrar o voucher no Student Developer Pack
+
+1. Acesse **[education.github.com/pack](https://education.github.com/pack)** (Student Developer Pack).
+2. Na barra de busca de ofertas, pesquise por **"GitHub Foundations"** ou role a página até localizar o bloco da oferta de certificação.
+3. Clique no bloco da oferta. Você verá um botão **"Get offer"**, **"Claim"** ou **"Resgatar"**.
+4. Clique no botão. Um **código de voucher** será exibido ou enviado para o e-mail cadastrado na sua conta GitHub.
+5. Copie e guarde o código — ele tem prazo de validade e uso único.
+
+---
+
+### 📅 Como agendar o exame com o voucher
+
+1. Acesse a página do exame em **[examregistration.github.com](https://examregistration.github.com)**.
+2. Faça login com sua conta GitHub ou crie uma conta no portal de certificações.
+3. Selecione o exame **GitHub Foundations**.
+4. Escolha **data, horário e fuso horário** de sua preferência.
+5. No passo de pagamento (checkout), localize o campo **"Voucher / Promo code / Discount code"**.
+6. Cole o código do voucher e clique em **"Apply"** / **"Aplicar"**.
+7. Confirme que o valor foi **zerado (R$ 0 / $0)** antes de finalizar.
+8. Conclua o agendamento e guarde o **e-mail de confirmação**.
+
+---
+
+### ⚠️ O que fazer se o voucher estiver esgotado
+
+A oferta funciona por **estoque limitado** — quando os vouchers acabam, o botão de resgate fica indisponível ou aparece como "Out of stock". Nesse caso:
+
+- **Tente novamente em alguns dias:** O GitHub Education reabre estoques periodicamente.
+- **Fique de olho nas redes sociais:** [@GitHubEducation](https://twitter.com/GitHubEducation) no Twitter/X costuma anunciar novas rodadas.
+- **Configure alertas de e-mail:** Em algumas contas do Student Pack, é possível ativar notificação para quando a oferta voltar.
+- **Use os recursos de preparação enquanto aguarda:** Os cursos do DataCamp, trilhas do Microsoft Learn e o Guia de Estudos oficial ficam disponíveis independentemente do estoque do voucher.
+
+---
+
+### 🆘 Caminhos de suporte
+
+| Problema | Canal de suporte |
+|---|---|
+| Voucher não aparece / conta não verificada | [education.github.com/contact](https://education.github.com/contact) |
+| Código do voucher com erro no checkout | [support.github.com](https://support.github.com) → "GitHub Education" |
+| Dúvidas sobre o exame / agendamento | [examregistration.github.com/support](https://examregistration.github.com) |
+| Comunidade e perguntas frequentes | [github.community/c/education](https://github.community/c/education) |
+
+**Ao abrir um chamado, inclua:**
+- Seu **username do GitHub**
+- Print/screenshot do erro ou mensagem recebida
+- Se aplicável: o código do voucher (sem expor publicamente)
+
+---
+
 ## 🙏 Agradecimentos
 
 - **GitHub Copilot** pela assistência no desenvolvimento
