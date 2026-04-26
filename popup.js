@@ -10,6 +10,7 @@
       focusTab: '🧠 Foco',
       statsTab: '📈 Estatísticas',
       settingsTab: '⚙️ Configurações',
+      planTab: '📋 Plano',
       startBtn: 'Iniciar',
       pauseBtn: 'Pausar',
       resetBtn: 'Resetar',
@@ -39,6 +40,7 @@
       focusTab: '🧠 Focus',
       statsTab: '📈 Stats',
       settingsTab: '⚙️ Settings',
+      planTab: '📋 Plan',
       startBtn: 'Start',
       pauseBtn: 'Pause',
       resetBtn: 'Reset',
@@ -74,7 +76,7 @@
     language: 'pt-BR',
     soundType: 'sparkle',
     volume: 70,
-    categoriesDefault: ['Programação', 'Concursos', 'Idiomas', 'Matemática', 'Leitura'],
+    categoriesDefault: ['Programação', 'Concursos', 'Certificações', 'Idiomas', 'Matemática', 'Leitura'],
     customCategories: [],
     currentCategory: 'Programação',
     charts: { weekly: null, category: null },
@@ -123,7 +125,8 @@
     const tabNames = {
       'focus': t('focusTab'),
       'stats': t('statsTab'),
-      'settings': t('settingsTab')
+      'settings': t('settingsTab'),
+      'plan': t('planTab')
     };
     
     tabButtons.forEach(btn => {
@@ -547,6 +550,99 @@
     });
   }
 
+  // ----- Plano de Estudo — Contagem Regressiva -----
+  function updateExamCountdown(dateStr) {
+    const display = $('countdownDisplay');
+    const daysLeftEl = $('daysLeft');
+    const daysLabelEl = $('daysLabel');
+    const motivationEl = $('examMotivation');
+    if (!display || !daysLeftEl) return;
+
+    if (!dateStr) { display.style.display = 'none'; return; }
+
+    const exam = new Date(dateStr + 'T00:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diffMs = exam - today;
+    const days = Math.round(diffMs / 86400000);
+
+    display.style.display = 'block';
+
+    if (days < 0) {
+      daysLeftEl.textContent = '🎉';
+      daysLabelEl.textContent = 'Prova já realizada!';
+      motivationEl.textContent = 'Parabéns pelo esforço!';
+    } else if (days === 0) {
+      daysLeftEl.textContent = '🔥';
+      daysLabelEl.textContent = 'É HOJE!';
+      motivationEl.textContent = 'Confia no seu estudo — vai arrasar!';
+    } else if (days === 1) {
+      daysLeftEl.textContent = '1';
+      daysLabelEl.textContent = 'dia para a prova';
+      motivationEl.textContent = 'Revisão leve, bom sono e confiança! 💪';
+    } else if (days <= 3) {
+      daysLeftEl.textContent = String(days);
+      daysLabelEl.textContent = 'dias para a prova';
+      motivationEl.textContent = 'Reta final! Foco nos pontos mais cobrados.';
+    } else if (days <= 7) {
+      daysLeftEl.textContent = String(days);
+      daysLabelEl.textContent = 'dias para a prova';
+      motivationEl.textContent = 'Semana decisiva — 1 simulado por dia!';
+    } else {
+      daysLeftEl.textContent = String(days);
+      daysLabelEl.textContent = 'dias para a prova';
+      motivationEl.textContent = 'Você tem tempo — estudo consistente!';
+    }
+  }
+
+  async function loadExamPlan() {
+    const data = await chrome.storage.local.get(['examDate', 'eveChecklist']);
+    const examDate = data.examDate || '';
+    const checkedItems = Array.isArray(data.eveChecklist) ? data.eveChecklist : [];
+
+    const dateInput = $('examDateInput');
+    if (dateInput && examDate) {
+      dateInput.value = examDate;
+      updateExamCountdown(examDate);
+    }
+
+    const checklistEl = $('eve-checklist');
+    if (checklistEl) {
+      checklistEl.querySelectorAll('li').forEach(li => {
+        if (checkedItems.includes(li.dataset.key)) li.classList.add('done');
+      });
+    }
+  }
+
+  function setupPlanListeners() {
+    const dateInput = $('examDateInput');
+    if (dateInput) {
+      dateInput.addEventListener('change', async (e) => {
+        const val = e.target.value;
+        await chrome.storage.local.set({ examDate: val });
+        updateExamCountdown(val);
+      });
+    }
+
+    const checklistEl = $('eve-checklist');
+    if (checklistEl) {
+      checklistEl.querySelectorAll('li').forEach(li => {
+        li.addEventListener('click', async () => {
+          li.classList.toggle('done');
+          const data = await chrome.storage.local.get('eveChecklist');
+          let checked = Array.isArray(data.eveChecklist) ? data.eveChecklist : [];
+          const key = li.dataset.key;
+          if (li.classList.contains('done')) {
+            if (!checked.includes(key)) checked.push(key);
+          } else {
+            checked = checked.filter(k => k !== key);
+          }
+          await chrome.storage.local.set({ eveChecklist: checked });
+        });
+      });
+    }
+  }
+
   // ----- Sistema de Desbloqueio de Áudio -----
   let audioUnlocked = false;
 
@@ -597,6 +693,8 @@
     await loadSettings();
     await loadCategories();
     setupListeners();
+    setupPlanListeners();
+    await loadExamPlan();
     await fullSync();
     await updateSpotifyPanel();
     try { await refreshCharts(); } catch(e) { console.warn('[Popup] refreshCharts falhou no bootstrap:', e); }
