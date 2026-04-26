@@ -85,6 +85,13 @@ Este projeto é um exemplo prático de **desenvolvimento assistido por IA**, ond
 - Controles de reprodução direto no timer
 - Sincronização com suas playlists
 
+### 📝 **Simulado AZ-900**
+- **15 questões** no estilo da prova real Microsoft Azure Fundamentals, em português
+- Cobre os 3 domínios: Conceitos de Nuvem, Serviços Azure Core e Segurança/Governança/Preços
+- Feedback imediato com explicação após cada resposta
+- Gabarito completo com pontuação e desempenho ao final
+- Abrir [`simulado-az900.html`](./simulado-az900.html) direto no navegador para treinar
+
 ---
 
 ## 🚀 Tecnologias Utilizadas
