@@ -211,6 +211,42 @@ study-ai/
 
 ---
 
+## 🎓 GitHub Foundations Certification — Voucher pelo Student Pack
+
+### **"Essa oferta não está disponível no momento, por favor, tente novamente mais tarde."**
+
+**O que significa:**  
+O sistema de vouchers do GitHub Education está temporariamente sem estoque ou indisponível para novas solicitações. Não é um erro da sua conta.
+
+**Causas mais prováveis:**
+- 📦 Lote de vouchers esgotado momentaneamente ("while supplies last")
+- 🔄 Reposição de estoque em andamento no backend do GitHub Education
+- 🌐 Instabilidade temporária na plataforma
+
+**O que fazer agora:**
+1. Confirme que sua conta aparece como **Verified Student** em [education.github.com/pack](https://education.github.com/pack).
+2. Tente novamente em uma **aba anônima** após fazer logout e login na conta do GitHub.
+3. Repita a tentativa **1× por dia durante 3 a 7 dias** — vouchers costumam ser reabastecidos em lotes.
+4. Se após 7 dias o aviso persistir, abra chamado no suporte do GitHub Education.
+
+**Cadência de retry recomendada:**
+
+| Dia | Ação |
+|-----|------|
+| 1–3 | Tente 1× por dia (manhã ou tarde) |
+| 4–7 | Continue tentando diariamente; observe anúncios em [@GitHubEducation](https://twitter.com/GitHubEducation) |
+| 8+  | Abra suporte se o aviso ainda aparecer |
+
+**Mensagem pronta para o suporte** (copie, preencha e envie em [support.github.com](https://support.github.com)):
+
+> Olá! Sou estudante verificado no GitHub Education (username: **SEU_USERNAME**) e, ao tentar resgatar a oferta do voucher do **GitHub Foundations Certification** no Student Developer Pack, recebo a mensagem: *"Essa oferta não está disponível no momento, por favor, tente novamente mais tarde."*
+>
+> Poderia verificar se a oferta está temporariamente sem estoque ou se há alguma pendência na minha elegibilidade?
+>
+> Obrigado(a)!
+
+---
+
 ## 🐛 Troubleshooting
 
 ### **Timer não inicia?**
