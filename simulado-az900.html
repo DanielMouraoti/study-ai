@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulado AZ-900 | Study AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-overlay: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.16), transparent 30%),
+                    radial-gradient(circle at 80% 0%,  rgba(255,255,255,0.14), transparent 28%),
+                    rgba(9,12,28,0.68);
+      --card:          rgba(255,255,255,0.10);
+      --card-hover:    rgba(255,255,255,0.16);
+      --stroke:        rgba(255,255,255,0.18);
+      --text:          #e9edf5;
+      --muted:         #c6cfde;
+      --accent:        #8bd0ff;
+      --accent-strong: #63b0ff;
+      --correct:       #4ade80;
+      --wrong:         #f87171;
+      --shadow:        0 18px 38px rgba(9,19,48,0.45);
+      --radius:        16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #1a1a2e;
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      color: var(--text);
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: var(--bg-overlay);
+      backdrop-filter: blur(2px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .header .badge {
+      display: inline-block;
+      background: rgba(99,176,255,0.18);
+      border: 1px solid rgba(99,176,255,0.35);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #8bd0ff 0%, #63b0ff 60%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.25;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      margin-bottom: 28px;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .progress-bar {
+      height: 5px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #63b0ff, #a78bfa);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding: 28px 28px 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      margin-bottom: 20px;
+    }
+
+    .question-number {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .question-text {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 22px;
+    }
+
+    /* ── Options ── */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 13px 16px;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, transform 0.12s;
+      font-size: 14px;
+      color: var(--text);
+      text-align: left;
+      width: 100%;
+    }
+
+    .option:hover:not([disabled]) {
+      background: var(--card-hover);
+      border-color: rgba(99,176,255,0.4);
+      transform: translateX(3px);
+    }
+
+    .option[disabled] { cursor: default; }
+
+    .option .letter {
+      min-width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .option.correct {
+      background: rgba(74,222,128,0.14);
+      border-color: rgba(74,222,128,0.5);
+    }
+
+    .option.correct .letter {
+      background: rgba(74,222,128,0.3);
+      color: var(--correct);
+    }
+
+    .option.wrong {
+      background: rgba(248,113,113,0.14);
+      border-color: rgba(248,113,113,0.5);
+    }
+
+    .option.wrong .letter {
+      background: rgba(248,113,113,0.3);
+      color: var(--wrong);
+    }
+
+    /* ── Feedback ── */
+    .feedback {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.55;
+      display: none;
+    }
+
+    .feedback.show { display: block; }
+
+    .feedback.correct-fb {
+      background: rgba(74,222,128,0.12);
+      border: 1px solid rgba(74,222,128,0.3);
+      color: #86efac;
+    }
+
+    .feedback.wrong-fb {
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.3);
+      color: #fca5a5;
+    }
+
+    /* ── Navigation ── */
+    .nav {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #63b0ff 0%, #a78bfa 100%);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      padding: 11px 28px;
+      cursor: pointer;
+      transition: opacity 0.18s, transform 0.12s;
+    }
+
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+    /* ── Results screen ── */
+    #results { display: none; }
+
+    .score-ring {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: conic-gradient(#63b0ff 0deg, rgba(255,255,255,0.1) 0deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+
+    .score-ring::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      background: #1a1a2e;
+    }
+
+    .score-ring span {
+      position: relative;
+      z-index: 1;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .result-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .result-subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .gabarito-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .gabarito-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .gabarito-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .gabarito-item .q-label {
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .gabarito-item .q-answer {
+      font-weight: 600;
+    }
+
+    .gabarito-item.hit .q-answer { color: var(--correct); }
+    .gabarito-item.miss .q-answer { color: var(--wrong); }
+
+    .restart-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(99,176,255,0.45);
+      color: var(--accent);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 12px;
+      padding: 11px 24px;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+
+    .btn-outline:hover { background: rgba(99,176,255,0.1); }
+
+    /* ── Start screen ── */
+    #start-screen {
+      text-align: center;
+    }
+
+    #start-screen .info-list {
+      list-style: none;
+      margin: 24px 0 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+    }
+
+    #start-screen .info-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    #start-screen .info-list li span:first-child {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ══ START SCREEN ══ -->
+  <div id="start-screen">
+    <div class="header">
+      <div class="badge">Study AI · AZ-900</div>
+      <h1>Simulado AZ-900<br>Microsoft Azure Fundamentals</h1>
+      <p>Teste seus conhecimentos antes da prova</p>
+    </div>
+
+    <div class="card">
+      <ul class="info-list">
+        <li><span>📋</span><span><strong>15 questões</strong> no estilo da prova real, em português.</span></li>
+        <li><span>🎯</span><span>Cobertura dos 3 domínios: <strong>Conceitos de Nuvem</strong>, <strong>Serviços Azure</strong> e <strong>Segurança / Governança / Preços</strong>.</span></li>
+        <li><span>✅</span><span>Feedback imediato após cada resposta com explicação.</span></li>
+        <li><span>📊</span><span>Gabarito completo com sua pontuação ao final.</span></li>
+        <li><span>💡</span><span>Dica: elimine as alternativas claramente erradas primeiro!</span></li>
+      </ul>
+      <div style="text-align:center;">
+        <button class="btn" onclick="startQuiz()">Iniciar Simulado 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ QUIZ SCREEN ══ -->
+  <div id="quiz-screen" style="display:none;">
+    <div class="header">
+      <div class="badge">Study AI · AZ-900</div>
+      <h1>Simulado AZ-900</h1>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="progress-label">Questão 1 de 15</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+
+    <div class="card" id="question-card">
+      <div class="question-number" id="q-number">Questão 1</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="options" id="q-options"></div>
+      <div class="feedback" id="q-feedback"></div>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="btn-next" onclick="nextQuestion()" disabled>Próxima →</button>
+    </div>
+  </div>
+
+  <!-- ══ RESULTS SCREEN ══ -->
+  <div id="results">
+    <div class="header">
+      <div class="badge">Study AI · AZ-900</div>
+      <h1>Resultado Final</h1>
+    </div>
+
+    <div class="card" style="text-align:center; padding: 36px 28px;">
+      <div class="score-ring" id="score-ring">
+        <span id="score-text">0/15</span>
+      </div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-subtitle" id="result-subtitle"></div>
+    </div>
+
+    <div class="card">
+      <div class="gabarito-title">📋 Gabarito Completo</div>
+      <div class="gabarito-grid" id="gabarito-grid"></div>
+    </div>
+
+    <div class="restart-wrap">
+      <button class="btn" onclick="restartQuiz()">🔄 Refazer Simulado</button>
+      <button class="btn-outline" onclick="showStart()">← Voltar ao início</button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  /* ═══════════════════════════════════════════
+     BANCO DE QUESTÕES — AZ-900 (PT-BR)
+     Domínios:
+       A — Conceitos de Nuvem
+       B — Serviços Azure Core
+       C — Segurança, Conformidade, Governança e Preços
+  ═══════════════════════════════════════════ */
+  const QUESTIONS = [
+    // ── Domínio A: Conceitos de Nuvem ──────────────────────────────────
+    {
+      domain: "Conceitos de Nuvem",
+      text: "Uma empresa deseja hospedar aplicações sem gerenciar servidores físicos, mas ainda precisa controlar o sistema operacional e o middleware. Qual modelo de serviço em nuvem atende melhor essa necessidade?",
+      options: ["SaaS (Software como Serviço)", "PaaS (Plataforma como Serviço)", "IaaS (Infraestrutura como Serviço)", "FaaS (Função como Serviço)"],
+      correct: 2,
+      explanation: "IaaS fornece infraestrutura virtualizada (VMs, redes, armazenamento) gerenciada pelo provedor, mas o cliente ainda controla o sistema operacional, middleware e aplicações."
+    },
+    {
+      domain: "Conceitos de Nuvem",
+      text: "Qual modelo de implantação em nuvem combina infraestrutura on-premises com recursos de nuvem pública, permitindo que dados e aplicações sejam compartilhados entre os dois ambientes?",
+      options: ["Nuvem pública", "Nuvem privada", "Nuvem híbrida", "Nuvem comunitária"],
+      correct: 2,
+      explanation: "A nuvem híbrida integra recursos on-premises (nuvem privada) com a nuvem pública, oferecendo flexibilidade para mover cargas de trabalho entre os dois ambientes conforme a necessidade."
+    },
+    {
+      domain: "Conceitos de Nuvem",
+      text: "Qual característica da nuvem permite que uma empresa pague apenas pelos recursos que realmente utilizar, sem compromisso de capacidade mínima?",
+      options: ["Alta disponibilidade", "Escalabilidade", "Modelo de consumo (pay-as-you-go)", "Elasticidade"],
+      correct: 2,
+      explanation: "O modelo pay-as-you-go (pagamento conforme o uso) é uma das principais vantagens de CapEx para OpEx na nuvem: você paga apenas pelo que consome, evitando gastos com infraestrutura ociosa."
+    },
+    {
+      domain: "Conceitos de Nuvem",
+      text: "Uma startup decide usar um software de CRM diretamente pelo navegador, sem instalações locais e sem gerenciar servidores. Qual modelo de serviço em nuvem ela está utilizando?",
+      options: ["IaaS", "PaaS", "SaaS", "CaaS (Container como Serviço)"],
+      correct: 2,
+      explanation: "SaaS entrega software pronto para uso via internet. O provedor gerencia toda a pilha — infraestrutura, plataforma e aplicação. O usuário apenas consome o software."
+    },
+    {
+      domain: "Conceitos de Nuvem",
+      text: "Qual conceito descreve a capacidade de um sistema em nuvem de aumentar ou diminuir automaticamente os recursos disponíveis de acordo com a demanda atual?",
+      options: ["Alta disponibilidade", "Elasticidade", "Tolerância a falhas", "Alcance global"],
+      correct: 1,
+      explanation: "Elasticidade é a capacidade de escalar recursos automaticamente (para cima ou para baixo) conforme a demanda varia, garantindo desempenho sem desperdício de recursos."
+    },
+
+    // ── Domínio B: Serviços Azure Core ─────────────────────────────────
+    {
+      domain: "Serviços Azure Core",
+      text: "Uma empresa precisa armazenar grandes volumes de dados não estruturados, como imagens, vídeos e backups, com acesso via URL HTTP. Qual serviço do Azure é mais adequado?",
+      options: ["Azure Files", "Azure Queue Storage", "Azure Blob Storage", "Azure Disk Storage"],
+      correct: 2,
+      explanation: "Azure Blob Storage é otimizado para armazenar grandes quantidades de dados não estruturados (objetos binários). É acessível via HTTP/HTTPS e ideal para imagens, vídeos, backups e logs."
+    },
+    {
+      domain: "Serviços Azure Core",
+      text: "Qual serviço do Azure permite hospedar aplicações web, APIs e back-ends móveis sem precisar provisionar ou gerenciar servidores, caracterizando-se como PaaS?",
+      options: ["Azure Virtual Machines", "Azure Functions", "Azure App Service", "Azure Kubernetes Service"],
+      correct: 2,
+      explanation: "Azure App Service é uma plataforma PaaS que permite hospedar aplicações web e APIs sem gerenciar servidores. O Azure Virtual Machines é IaaS; Functions é serverless para eventos."
+    },
+    {
+      domain: "Serviços Azure Core",
+      text: "Uma organização precisa garantir que suas VMs críticas permaneçam disponíveis mesmo em caso de falha de um datacenter inteiro dentro de uma mesma região. Qual recurso do Azure deve ser usado?",
+      options: ["Availability Set", "Azure Load Balancer", "Availability Zone", "Azure Traffic Manager"],
+      correct: 2,
+      explanation: "As Availability Zones são datacenters fisicamente separados dentro de uma região Azure. Ao distribuir VMs entre zonas, a organização garante disponibilidade mesmo se um datacenter inteiro falhar."
+    },
+    {
+      domain: "Serviços Azure Core",
+      text: "Qual serviço do Azure fornece uma rede virtual isolada e privada na nuvem, permitindo segmentar e controlar a comunicação entre recursos Azure?",
+      options: ["Azure VPN Gateway", "Azure Virtual Network (VNet)", "Azure ExpressRoute", "Azure DNS"],
+      correct: 1,
+      explanation: "Azure Virtual Network (VNet) é o bloco fundamental de rede no Azure. Ela cria um ambiente de rede isolado onde você pode implantar recursos e controlar a comunicação entre eles."
+    },
+    {
+      domain: "Serviços Azure Core",
+      text: "Uma equipe de desenvolvimento quer executar código sob demanda em resposta a eventos (ex.: mensagens em fila) sem provisionar servidores. Qual serviço do Azure atende essa necessidade?",
+      options: ["Azure App Service", "Azure Virtual Machines", "Azure Functions", "Azure Batch"],
+      correct: 2,
+      explanation: "Azure Functions é o serviço serverless do Azure. Executa código em resposta a eventos (HTTP, filas, timers, etc.) sem necessidade de provisionar ou gerenciar infraestrutura."
+    },
+
+    // ── Domínio C: Segurança, Conformidade, Governança e Preços ─────────
+    {
+      domain: "Segurança, Governança e Preços",
+      text: "Qual serviço do Azure permite definir e aplicar regras que garantam que os recursos criados na organização sigam determinados padrões — como restringir implantações a regiões específicas?",
+      options: ["Azure RBAC", "Azure Blueprints", "Azure Policy", "Microsoft Defender for Cloud"],
+      correct: 2,
+      explanation: "Azure Policy cria, atribui e gerencia definições de políticas que aplicam regras aos recursos Azure. Pode bloquear criação de recursos em regiões não autorizadas ou exigir tags obrigatórias."
+    },
+    {
+      domain: "Segurança, Governança e Preços",
+      text: "O que é o RBAC (Role-Based Access Control) no Azure?",
+      options: [
+        "Um firewall que protege a rede perimetral",
+        "Um sistema de controle de acesso que concede permissões com base em funções atribuídas a usuários",
+        "Uma ferramenta para monitorar performance de aplicações",
+        "Um serviço de autenticação multifator"
+      ],
+      correct: 1,
+      explanation: "RBAC (Controle de Acesso Baseado em Funções) permite conceder apenas o nível de acesso que os usuários precisam, atribuindo-lhes funções (roles) como Leitor, Colaborador ou Proprietário nos recursos."
+    },
+    {
+      domain: "Segurança, Governança e Preços",
+      text: "O que representa o SLA (Acordo de Nível de Serviço) que a Microsoft fornece para os serviços do Azure?",
+      options: [
+        "Um contrato de suporte técnico pago",
+        "A garantia de tempo de atividade (uptime) e conectividade dos serviços Azure",
+        "Um plano automático de backup dos dados do cliente",
+        "Um acordo de preço fixo anual"
+      ],
+      correct: 1,
+      explanation: "O SLA do Azure define o percentual de tempo de atividade garantido (ex.: 99,9% ou 99,99%). Se a Microsoft não cumprir, o cliente recebe créditos de serviço como compensação."
+    },
+    {
+      domain: "Segurança, Governança e Preços",
+      text: "Qual ferramenta do Azure você deve usar ANTES de implantar recursos, para estimar o custo mensal da solução planejada?",
+      options: ["Azure Cost Management + Billing", "Calculadora de Preços do Azure", "Azure Advisor", "Azure Monitor"],
+      correct: 1,
+      explanation: "A Calculadora de Preços do Azure (azure.microsoft.com/pricing/calculator) permite estimar custos antes de implantar recursos. O Azure Cost Management é usado para monitorar e otimizar gastos já existentes."
+    },
+    {
+      domain: "Segurança, Governança e Preços",
+      text: "Qual serviço de segurança do Azure fornece avaliação contínua de postura de segurança, proteção contra ameaças e recomendações de conformidade para cargas de trabalho em nuvem e híbridas?",
+      options: [
+        "Azure Firewall",
+        "Azure DDoS Protection",
+        "Microsoft Defender for Cloud",
+        "Azure Active Directory"
+      ],
+      correct: 2,
+      explanation: "Microsoft Defender for Cloud (antigo Azure Security Center) monitora continuamente a postura de segurança, detecta ameaças e fornece um Secure Score com recomendações de melhoria para ambientes Azure, on-premises e multi-cloud."
+    }
+  ];
+
+  /* ═══════════════════════════════════════════
+     ESTADO DA APLICAÇÃO
+  ═══════════════════════════════════════════ */
+  let currentIndex = 0;
+  let userAnswers   = [];
+  let answered      = false;
+
+  /* ═══════════════════════════════════════════
+     FUNÇÕES DE CONTROLE
+  ═══════════════════════════════════════════ */
+  function startQuiz() {
+    currentIndex = 0;
+    userAnswers  = [];
+    answered     = false;
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('results').style.display      = 'none';
+    document.getElementById('quiz-screen').style.display  = 'block';
+    renderQuestion();
+  }
+
+  function showStart() {
+    document.getElementById('results').style.display      = 'none';
+    document.getElementById('quiz-screen').style.display  = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+  }
+
+  function restartQuiz() {
+    startQuiz();
+  }
+
+  function renderQuestion() {
+    const q        = QUESTIONS[currentIndex];
+    const total    = QUESTIONS.length;
+    const pct      = Math.round((currentIndex / total) * 100);
+    answered       = false;
+
+    // Progress
+    document.getElementById('progress-label').textContent = `Questão ${currentIndex + 1} de ${total}`;
+    document.getElementById('progress-pct').textContent   = `${pct}%`;
+    document.getElementById('progress-fill').style.width  = `${pct}%`;
+
+    // Question
+    document.getElementById('q-number').textContent = `Questão ${currentIndex + 1} — ${q.domain}`;
+    document.getElementById('q-text').textContent   = q.text;
+
+    // Options
+    const optionsEl = document.getElementById('q-options');
+    optionsEl.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+      btn.onclick   = () => selectAnswer(i);
+      optionsEl.appendChild(btn);
+    });
+
+    // Feedback
+    const fb = document.getElementById('q-feedback');
+    fb.className = 'feedback';
+    fb.textContent = '';
+
+    // Next button
+    document.getElementById('btn-next').disabled = true;
+  }
+
+  function selectAnswer(index) {
+    if (answered) return;
+    answered = true;
+
+    const q       = QUESTIONS[currentIndex];
+    const options = document.querySelectorAll('#q-options .option');
+    const letters = ['A', 'B', 'C', 'D'];
+
+    userAnswers[currentIndex] = index;
+
+    options.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === q.correct) {
+        btn.classList.add('correct');
+      } else if (i === index && index !== q.correct) {
+        btn.classList.add('wrong');
+      }
+    });
+
+    const fb      = document.getElementById('q-feedback');
+    const isRight = index === q.correct;
+    fb.className  = `feedback show ${isRight ? 'correct-fb' : 'wrong-fb'}`;
+    fb.innerHTML  = isRight
+      ? `✅ <strong>Correto!</strong> ${q.explanation}`
+      : `❌ <strong>Incorreto.</strong> A resposta certa era <strong>${letters[q.correct]}) ${q.options[q.correct]}</strong>. ${q.explanation}`;
+
+    const nextBtn = document.getElementById('btn-next');
+    nextBtn.disabled  = false;
+    nextBtn.textContent = currentIndex === QUESTIONS.length - 1 ? 'Ver Resultado 🏁' : 'Próxima →';
+  }
+
+  function nextQuestion() {
+    if (!answered) return;
+    currentIndex++;
+    if (currentIndex >= QUESTIONS.length) {
+      showResults();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  function showResults() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('results').style.display     = 'block';
+
+    const total   = QUESTIONS.length;
+    const score   = userAnswers.filter((ans, i) => ans === QUESTIONS[i].correct).length;
+    const pct     = Math.round((score / total) * 100);
+    const letters = ['A', 'B', 'C', 'D'];
+
+    // Score ring
+    const deg = Math.round((score / total) * 360);
+    document.getElementById('score-ring').style.background =
+      `conic-gradient(#63b0ff ${deg}deg, rgba(255,255,255,0.1) ${deg}deg)`;
+    document.getElementById('score-text').textContent = `${score}/${total}`;
+
+    // Title & subtitle
+    let title, subtitle;
+    if (pct >= 80) {
+      title    = '🎉 Excelente! Você está pronto!';
+      subtitle = `${pct}% de acerto — acima da média de aprovação. Continue revisando os erros e boa prova no dia 02/05!`;
+    } else if (pct >= 60) {
+      title    = '👍 Bom! Continue estudando.';
+      subtitle = `${pct}% de acerto — quase lá! Revise os tópicos marcados em vermelho e refaça o simulado.`;
+    } else {
+      title    = '📚 Continue praticando!';
+      subtitle = `${pct}% de acerto — ainda há espaço para crescer. Revise o Microsoft Learn e refaça o simulado.`;
+    }
+    document.getElementById('result-title').textContent   = title;
+    document.getElementById('result-subtitle').textContent = subtitle;
+
+    // Gabarito grid
+    const grid = document.getElementById('gabarito-grid');
+    grid.innerHTML = '';
+    QUESTIONS.forEach((q, i) => {
+      const userAns    = userAnswers[i];
+      const isHit      = userAns === q.correct;
+      const item       = document.createElement('div');
+      item.className   = `gabarito-item ${isHit ? 'hit' : 'miss'}`;
+
+      const userLetter    = userAns !== undefined ? letters[userAns] : '—';
+      const correctLetter = letters[q.correct];
+
+      item.innerHTML = `
+        <span class="q-label">Questão ${i + 1} · ${q.domain}</span>
+        <span class="q-answer">${isHit
+          ? `✅ ${correctLetter}) Correto`
+          : `❌ Você: ${userLetter}) · Certo: ${correctLetter})`
+        }</span>
+      `;
+      grid.appendChild(item);
+    });
+
+    // Progress to 100%
+    document.getElementById('progress-fill').style.width = '100%';
+  }
+</script>
+</body>
+</html>
